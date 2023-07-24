@@ -1,7 +1,9 @@
 package com.practice.jobsearchproject.exception;
 
-public class AlreadyExistsException extends RuntimeException{
+import org.springframework.http.HttpStatus;
+
+public class AlreadyExistsException extends ApplicationException{
     public AlreadyExistsException(String message) {
-        super(message);
+        super(message, HttpStatus.CONFLICT);
     }
 }

@@ -1,8 +1,10 @@
 package com.practice.jobsearchproject.exception;
 
-public class PasswordException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class PasswordException extends ApplicationException {
 
     public PasswordException(String message) {
-        super(message);
+        super(message, HttpStatus.CONFLICT);
     }
 }
