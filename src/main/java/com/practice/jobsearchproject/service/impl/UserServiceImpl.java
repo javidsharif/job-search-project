@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
         if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
             throw new PasswordException("Password is wrong");
         }
-        if (userDto.getPassword() != null) {
+        if (userDto.getPassword() == null) {
             throw new PasswordException("Password cannot be null");
         }
         User user = getUser(userDto);
