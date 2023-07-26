@@ -83,7 +83,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("https://job-search-project-78cb5c6d6611.herokuapp.com",
                                                         "http://localhost:8080",
-                                                         "http://127.0.0.1:5500"));
+                                                         "http://127.0.0.1:5500",
+                                                            "http://localhost:5173"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
