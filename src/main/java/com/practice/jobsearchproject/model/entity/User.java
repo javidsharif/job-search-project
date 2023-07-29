@@ -26,11 +26,6 @@ public class User {
     private String name;
     @NotBlank(message = "surname is mandatory")
     private String surname;
-
-//    private String password;
-//    @NotBlank(message = "email is mandatory")
-//    private String email;
-
     private Date dateOfBirth;
     @NotBlank(message = "phone is mandatory")
     private String phone;

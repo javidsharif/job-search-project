@@ -28,10 +28,12 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
 
     private final UserAuthenticationRepository userAuthRepository;
+
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
     @Override
     public void createUser(UserRequestDto userDto) {
         if (userAuthRepository.findByEmail(userDto.getEmail()).isPresent()) {
@@ -39,9 +41,6 @@ public class UserServiceImpl implements UserService {
         }
         if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
             throw new PasswordException("Password is wrong");
-        }
-        if (userDto.getPassword() == null || userDto.getPassword().isEmpty() || userDto.getPassword().isBlank()) {
-            throw new PasswordException("Password cannot be null");
         }
         User user = getUser(userDto);
         UserAuthentication userAuth = getUserAuthentication(userDto.getEmail(), userDto.getPassword(), user);
@@ -54,37 +53,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(UserRequestDto userDto, CustomUserDetails userDetails) {
-
+        String newPassword = userDto.getPassword();
+        String confirmedPassword = userDto.getConfirmPassword();
+        User authenticatedUser = findByEmail(userDetails.getUsername()).getUser();
+        if (!newPassword.equals(confirmedPassword)) {
+            throw new PasswordException("The password confirmation does not match.");
+        }
+        if (!newPassword.equals(authenticatedUser.getUserAuthentication().getPassword())) {
+            authenticatedUser.getUserAuthentication().setPassword(passwordEncoder.encode(newPassword));
+        }
+        String dtoEmail = userDto.getEmail();
+        if (!dtoEmail.equals(authenticatedUser.getUserAuthentication().getEmail())) {
+            if (userAuthRepository.findByEmail(dtoEmail).isPresent()) {
+                throw new AlreadyExistsException(
+                        String.format("email with %s already exists", dtoEmail));
+            }
+        }
+        fillUser(userDto, authenticatedUser);
+        save(authenticatedUser);
     }
-//    @Override
-//    public void updateUser(UserRequestDto userDto, CustomUserDetails userDetails) {
-//        String newPassword = userDto.getPassword();
-//        String confirmedPassword = userDto.getConfirmPassword();
-//        User authenticatedUser = findByEmail(userDetails.getUsername());
-//        if (!newPassword.equals(confirmedPassword)) {
-//            throw new PasswordException("The password confirmation does not match.");
-//        }
-//        if (!newPassword.equals(authenticatedUser.getPassword())) {
-//            authenticatedUser.setPassword(passwordEncoder.encode(newPassword));
-//        }
-//        String dtoEmail = userDto.getEmail();
-//        if (!dtoEmail.equals(authenticatedUser.getEmail())) {
-//            if (userRepository.findByEmail(dtoEmail).isPresent()) {
-//                throw new AlreadyExistsException(
-//                        String.format("email with %s already exists", dtoEmail));
-//            }
-//        }
-//        fillUser(userDto, authenticatedUser);
-//        save(authenticatedUser);
-//    }
 
     private User getUser(UserRequestDto userDto) {
         return User.builder()
-//                .password(passwordEncoder.encode(userDto.getPassword()))
                 .name(userDto.getName())
                 .surname(userDto.getSurname())
                 .city(userDto.getCity())
-//                .email(userDto.getEmail())
                 .dateOfBirth(userDto.getDateOfBirth())
                 .gender(userDto.getGender())
                 .phone(userDto.getPhone())
@@ -94,24 +87,26 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserAuthentication getUserAuthentication(String email, String password, User user) {
-        return new UserAuthentication(email,passwordEncoder.encode(password),user);
+        return new UserAuthentication(email, passwordEncoder.encode(password), user);
     }
 
-//    private void fillUser(UserRequestDto userDto, User authenticatedUser) {
-//        authenticatedUser.setName(userDto.getName());
-//        authenticatedUser.setSurname(userDto.getSurname());
-//        authenticatedUser.setCity(userDto.getCity());
-//        authenticatedUser.setDateOfBirth(userDto.getDateOfBirth());
-//        authenticatedUser.setEmail(userDto.getEmail());
-//        authenticatedUser.setPhone(userDto.getPhone());
-//        authenticatedUser.setGender(userDto.getGender());
-//        authenticatedUser.setPhotoUrl(userDto.getPhotoUrl());
-//        authenticatedUser.setCreatedAt(LocalDateTime.now());
-//    }
-//    private User findByEmail(String email) {
-//        return userRepository.findByEmail(email)
-//                .orElseThrow(() -> new NotFoundException(String.format("email with %s not found", email)));
-//    }
+    private void fillUser(UserRequestDto userDto, User authenticatedUser) {
+        authenticatedUser.setName(userDto.getName());
+        authenticatedUser.setSurname(userDto.getSurname());
+        authenticatedUser.setCity(userDto.getCity());
+        authenticatedUser.setDateOfBirth(userDto.getDateOfBirth());
+        authenticatedUser.getUserAuthentication().setEmail(userDto.getEmail());
+        authenticatedUser.setPhone(userDto.getPhone());
+        authenticatedUser.setGender(userDto.getGender());
+        authenticatedUser.setPhotoUrl(userDto.getPhotoUrl());
+        authenticatedUser.setCreatedAt(LocalDateTime.now());
+    }
+
+    private UserAuthentication findByEmail(String email) {
+        return userAuthRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(String.format("email with %s not found", email)));
+    }
+
     public void save(User user) {
         userRepository.save(user);
     }
