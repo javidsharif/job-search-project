@@ -48,8 +48,8 @@ public class UserServiceImpl implements UserService {
         user.setUserAuthentication(userAuth);
         userAuth.setUser(user);
         user.setRole(roleService.findByName("USER"));
-        userAuthRepository.save(userAuth);
         save(user);
+        userAuthRepository.save(userAuth);
     }
 
     @Override
