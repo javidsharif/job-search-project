@@ -10,15 +10,15 @@ import java.util.Date;
 
 @Data
 public class UserRequestDto {
+    @Pattern(regexp = "^$|\\D++", message = "Numbers not allowed")
     @NotBlank(message = "name is mandatory")
-    @Pattern(regexp = "\\D+", message = "Numbers not allowed")
     private String name;
+    @Pattern(regexp = "^$|\\D+", message = "Numbers not allowed")
     @NotBlank(message = "surname is mandatory")
-    @Pattern(regexp = "\\D+", message = "Numbers not allowed")
     private String surname;
-    @NotNull
+    @NotBlank(message = "password is mandatory")
     private String password;
-    @NotNull
+    @NotBlank(message = "confirm password is mandatory")
     private String confirmPassword;
     @NotNull
     @NotBlank(message = "email is mandatory")
