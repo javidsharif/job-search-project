@@ -1,24 +1,18 @@
 package com.practice.jobsearchproject.model.entity;
 
-import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
-import javax.persistence.GenerationType;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -33,9 +27,9 @@ public class User {
     @NotBlank(message = "surname is mandatory")
     private String surname;
 
-    private String password;
-    @NotBlank(message = "email is mandatory")
-    private String email;
+//    private String password;
+//    @NotBlank(message = "email is mandatory")
+//    private String email;
 
     private Date dateOfBirth;
     @NotBlank(message = "phone is mandatory")
@@ -52,5 +46,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Role role;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_authentication_id", referencedColumnName = "id")
+    private UserAuthentication userAuthentication;
+
+
 
 }

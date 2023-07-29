@@ -1,6 +1,7 @@
 package com.practice.jobsearchproject.model;
 
 import com.practice.jobsearchproject.model.entity.User;
+import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,12 +23,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user.getUserAuthentication().getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return user.getUserAuthentication().getEmail();
     }
 
     @Override
