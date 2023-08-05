@@ -1,6 +1,8 @@
 package com.practice.jobsearchproject.model.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -9,6 +11,8 @@ import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequestDto {
     @Pattern(regexp = "^$|\\D++", message = "Numbers not allowed")
     @NotBlank(message = "name is mandatory")
