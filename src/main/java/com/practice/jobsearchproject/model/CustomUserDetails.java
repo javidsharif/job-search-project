@@ -11,24 +11,33 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
-    @Getter
-    private final User user;
+    private final UserAuthentication userAuthentication;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole().getName()));
+        if (userAuthentication.getCompany() == null) {
+            return List.of(new SimpleGrantedAuthority(userAuthentication.getUser().getRole().getName()));
+        }
+        return List.of(new SimpleGrantedAuthority(userAuthentication.getCompany().getRole().getName()));
     }
 
     @Override
     public String getPassword() {
-        return user.getUserAuthentication().getPassword();
+        if (userAuthentication.getCompany() == null) {
+            return userAuthentication.getUser().getUserAuthentication().getPassword();
+        }
+        return userAuthentication.getCompany().getUserAuthentication().getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUserAuthentication().getEmail();
+        if (userAuthentication.getCompany() == null) {
+            return userAuthentication.getUser().getUserAuthentication().getEmail();
+        }
+        return userAuthentication.getCompany().getUserAuthentication().getEmail();
     }
 
     @Override

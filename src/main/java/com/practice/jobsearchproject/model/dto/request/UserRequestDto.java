@@ -10,10 +10,10 @@ import java.util.Date;
 
 @Data
 public class UserRequestDto {
-    @Pattern(regexp = "^$|\\D++", message = "Numbers not allowed")
+    @Pattern(regexp = "^[A-Z][a-zA-Z]*$", message = "Numbers and the first letter starting with a lowercase letter not allowed")
     @NotBlank(message = "name is mandatory")
     private String name;
-    @Pattern(regexp = "^$|\\D+", message = "Numbers not allowed")
+    @Pattern(regexp = "^[A-Z][a-zA-Z]*$", message = "Numbers and the first letter starting with a lowercase letter not allowed")
     @NotBlank(message = "surname is mandatory")
     private String surname;
     @NotBlank(message = "password is mandatory")
@@ -29,5 +29,4 @@ public class UserRequestDto {
     private String gender;
     private String city;
     private String photoUrl;
-
 }

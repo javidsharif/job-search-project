@@ -62,13 +62,6 @@ public class UserServiceImpl implements UserService {
         if (!newPassword.equals(authenticatedUser.getUserAuthentication().getPassword())) {
             authenticatedUser.getUserAuthentication().setPassword(passwordEncoder.encode(newPassword));
         }
-        String dtoEmail = userDto.getEmail();
-        if (!dtoEmail.equals(authenticatedUser.getUserAuthentication().getEmail())) {
-            if (userAuthRepository.findByEmail(dtoEmail).isPresent()) {
-                throw new AlreadyExistsException(
-                        String.format("email with %s already exists", dtoEmail));
-            }
-        }
         fillUser(userDto, authenticatedUser);
         save(authenticatedUser);
     }
@@ -95,11 +88,15 @@ public class UserServiceImpl implements UserService {
         authenticatedUser.setSurname(userDto.getSurname());
         authenticatedUser.setCity(userDto.getCity());
         authenticatedUser.setDateOfBirth(userDto.getDateOfBirth());
-        authenticatedUser.getUserAuthentication().setEmail(userDto.getEmail());
+        if (!authenticatedUser.getUserAuthentication().getEmail().equals(userDto.getEmail())) {
+            authenticatedUser.getUserAuthentication().setEmail(userDto.getEmail());
+        }
+        if (!authenticatedUser.getUserAuthentication().getPassword().equals(userDto.getPassword())) {
+            authenticatedUser.getUserAuthentication().setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
         authenticatedUser.setPhone(userDto.getPhone());
         authenticatedUser.setGender(userDto.getGender());
         authenticatedUser.setPhotoUrl(userDto.getPhotoUrl());
-        authenticatedUser.setCreatedAt(LocalDateTime.now());
     }
 
     private UserAuthentication findByEmail(String email) {
