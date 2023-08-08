@@ -1,7 +1,6 @@
 package com.practice.jobsearchproject.controller;
 
 import com.practice.jobsearchproject.model.CustomUserDetails;
-import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,11 +15,6 @@ public class CustomAuthentication implements Authentication {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
-
-//    public CustomAuthentication(String name) {
-//        this.name = name;
-//    }
-
     @Override
     public Object getCredentials() {
         return null;
