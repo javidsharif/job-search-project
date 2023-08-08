@@ -1,9 +1,7 @@
 package com.practice.jobsearchproject.service.impl;
 
 import com.practice.jobsearchproject.model.CustomUserDetails;
-import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
-import com.practice.jobsearchproject.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +15,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return new CustomUserDetails(userAuthRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found")).getUser());
+        if (userAuthRepository.findByEmail(email).get().getUser() != null) {
+            return new CustomUserDetails(userAuthRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found")).getUser().getUserAuthentication());
+        } else {
+            return new CustomUserDetails(userAuthRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found")).getCompany().getUserAuthentication());
+        }
     }
 }

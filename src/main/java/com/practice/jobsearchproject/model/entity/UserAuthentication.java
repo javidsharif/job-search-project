@@ -21,9 +21,19 @@ public class UserAuthentication {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @OneToOne
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    private Company company;
+
     public UserAuthentication(String email, String password, User user) {
         this.email = email;
         this.password = password;
         this.user = user;
+    }
+
+    public UserAuthentication(String email, String password, Company company) {
+        this.email = email;
+        this.password = password;
+        this.company = company;
     }
 }
