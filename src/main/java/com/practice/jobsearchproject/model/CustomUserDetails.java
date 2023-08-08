@@ -1,7 +1,5 @@
 package com.practice.jobsearchproject.model;
 
-import com.practice.jobsearchproject.model.entity.Company;
-import com.practice.jobsearchproject.model.entity.User;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
