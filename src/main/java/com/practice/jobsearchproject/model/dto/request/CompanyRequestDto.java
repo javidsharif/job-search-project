@@ -1,6 +1,5 @@
 package com.practice.jobsearchproject.model.dto.request;
 
-import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -9,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
-//@Builder
 public class CompanyRequestDto {
     @NotBlank(message = "Name is mandatory")
     @Pattern(regexp = "^[A-Z][a-zA-Z]*$", message = "Numbers and the first letter starting with a lowercase letter not allowed")
@@ -31,4 +29,5 @@ public class CompanyRequestDto {
     @Email(regexp = "^(.+)@(.+)$", message = "Cv email is wrong")
     private String cvEmail;
     private String information;
+    private String photoUrl;
 }

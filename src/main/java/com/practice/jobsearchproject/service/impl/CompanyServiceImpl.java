@@ -19,11 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +44,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public void createCompany(CompanyRequestDto companyRequestDto) {
         if (userAuthRepository.findByEmail(companyRequestDto.getEmail()).isPresent()) {
-            throw new AlreadyExistsException("email already exists");
+            throw new AlreadyExistsException(String.format("email with %s already exists", companyRequestDto.getEmail()));
         }
         if (!companyRequestDto.getPassword().equals(companyRequestDto.getConfirmPassword())) {
             throw new PasswordException("Password is wrong");
@@ -83,6 +79,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .telephone(companyRequestDto.getTelephone())
                 .cvEmail(companyRequestDto.getCvEmail())
                 .information(companyRequestDto.getInformation())
+                .photoUrl(companyRequestDto.getPhotoUrl())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
@@ -110,12 +107,6 @@ public class CompanyServiceImpl implements CompanyService {
         authenticatedCompany.setPhotoUrl(companyDto.getPhotoUrl());
         authenticatedCompany.setCity(companyDto.getCity());
         authenticatedCompany.setFieldOfActivity(companyDto.getFieldOfActivity());
-//        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-//        try {
-//            authenticatedCompany.setFoundationDate(formatter.parse(companyDto.getFoundationDate()));
-//        } catch (ParseException e) {
-//            throw new RuntimeException(e);
-//        }
         authenticatedCompany.setFoundationDate(companyDto.getFoundationDate());
         authenticatedCompany.setNumberOfEmployees(companyDto.getNumberOfEmployees());
         authenticatedCompany.setAddress(companyDto.getAddress());

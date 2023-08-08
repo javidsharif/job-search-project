@@ -1,4 +1,4 @@
-package com.practice.jobsearchproject.service.serviceImpl;
+package com.practice.jobsearchproject.service;
 
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
@@ -13,7 +13,6 @@ import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.model.mapper.CompanyMapper;
 import com.practice.jobsearchproject.repository.CompanyRepository;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
-import com.practice.jobsearchproject.service.RoleService;
 import com.practice.jobsearchproject.service.impl.CompanyServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +38,7 @@ public class CompanyServiceImplTest {
     CompanyMapper companyMapper;
     @InjectMocks
     CompanyServiceImpl companyService;
+
     @Mock
     PasswordEncoder passwordEncoder;
     @Mock
@@ -101,22 +101,15 @@ public class CompanyServiceImplTest {
         Assertions.assertEquals("cavidan.niyazali@gmail.com", result.get(0).getCvEmail());
         Assertions.assertEquals("cavidan.niyazali", result.get(0).getInformation());
         Assertions.assertEquals(LocalDateTime.of(2023, 7, 27, 12, 0), result.get(0).getCreatedAt());
-//        Assertions.assertNull(result.get(0).getPhotoUrl());
         Assertions.assertEquals("photo1", result.get(0).getPhotoUrl());
         Assertions.assertEquals("Baku", result.get(0).getCity());
-//        Assertions.assertNull(result.get(0).getFieldOfActivity());
         Assertions.assertEquals("1", result.get(0).getFieldOfActivity());
         Assertions.assertEquals(17, result.get(0).getNumberOfEmployees());
-//        Assertions.assertNull(result.get(0).getAddress());
         Assertions.assertEquals("Baku", result.get(0).getAddress());
         Assertions.assertEquals("company1@mail.ru", result.get(0).getSiteOfCompany());
-//        Assertions.assertNull(result.get(0).getLinkedinProfileLink());
         Assertions.assertEquals("linkedin1", result.get(0).getLinkedinProfileLink());
-//        Assertions.assertNull(result.get(0).getFacebookProfileLink());
         Assertions.assertEquals("facebook1", result.get(0).getFacebookProfileLink());
-//        Assertions.assertNull(result.get(0).getInstagramProfileLink());
         Assertions.assertEquals("instagram1", result.get(0).getInstagramProfileLink());
-//        Assertions.assertNull(result.get(0).getTwitterProfileLink());
         Assertions.assertEquals("twitter1", result.get(0).getTwitterProfileLink());
 
         Assertions.assertEquals(2, result.size());
@@ -125,22 +118,15 @@ public class CompanyServiceImplTest {
         Assertions.assertEquals("canpo_niyazali@mail.ru", result.get(1).getCvEmail());
         Assertions.assertEquals("canpo_niyazali", result.get(1).getInformation());
         Assertions.assertEquals(LocalDateTime.of(2023, 7, 27, 12, 0), result.get(1).getCreatedAt());
-//        Assertions.assertNull(result.get(1).getPhotoUrl());
         Assertions.assertEquals("photo2", result.get(1).getPhotoUrl());
         Assertions.assertEquals("London", result.get(1).getCity());
-//        Assertions.assertNull(result.get(1).getFieldOfActivity());
         Assertions.assertEquals("2", result.get(1).getFieldOfActivity());
         Assertions.assertEquals(20, result.get(1).getNumberOfEmployees());
-//        Assertions.assertNull(result.get(1).getAddress());
         Assertions.assertEquals("London", result.get(1).getAddress());
         Assertions.assertEquals("company2@mail.ru", result.get(1).getSiteOfCompany());
-//        Assertions.assertNull(result.get(1).getLinkedinProfileLink());
         Assertions.assertEquals("linkedin2", result.get(1).getLinkedinProfileLink());
-//        Assertions.assertNull(result.get(1).getFacebookProfileLink());
         Assertions.assertEquals("facebook2", result.get(1).getFacebookProfileLink());
-//        Assertions.assertNull(result.get(1).getInstagramProfileLink());
         Assertions.assertEquals("instagram2", result.get(1).getInstagramProfileLink());
-//        Assertions.assertNull(result.get(1).getTwitterProfileLink());
         Assertions.assertEquals("twitter2", result.get(1).getTwitterProfileLink());
 
         Mockito.verify(companyRepository, Mockito.times(1)).findAll();
@@ -213,7 +199,6 @@ public class CompanyServiceImplTest {
         authenticatedCompany.setUserAuthentication(userAuthentication);
         authenticatedCompany.getUserAuthentication().setCompany(authenticatedCompany);
         authenticatedCompany.getUserAuthentication().setEmail("test@gmail.com");
-//        userAuthentication.setCompany(authenticatedCompany);
         Mockito.when(userAuthRepository.findByEmail(customUserDetails.getUsername())).thenReturn(Optional.of(authenticatedCompany.getUserAuthentication()));
 
         Mockito.when(companyRepository.save(Mockito.any(Company.class))).thenReturn(authenticatedCompany);

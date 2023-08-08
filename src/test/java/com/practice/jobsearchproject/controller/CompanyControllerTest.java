@@ -25,7 +25,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 public class CompanyControllerTest {
     @Mock
     private CompanyService companyService;
@@ -37,7 +36,6 @@ public class CompanyControllerTest {
         MockitoAnnotations.initMocks(this);
         Mockito.when(companyService.getAllCompanies()).thenReturn(new ArrayList<>());
     }
-
     @Test
     @DisplayName("Test getAllCompanies() with data")
     void testGetAllCompaniesWithData() throws Exception {
@@ -62,7 +60,6 @@ public class CompanyControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].telephone").value("+994 50 987 65 43"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].cvEmail").value("company2@gmail.com"));
     }
-
     @Test
     @DisplayName("Test getAllCompanies() with no data")
     void testGetAllCompaniesWithNoData() throws Exception {
@@ -78,7 +75,6 @@ public class CompanyControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(0));
     }
-
     @Test
     @DisplayName("Test createCompany() with valid data")
     void testCreateCompanyWithValidData() throws Exception {
@@ -96,7 +92,6 @@ public class CompanyControllerTest {
                         .content(new ObjectMapper().writeValueAsString(companyRequestDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
-
     @Test
     @DisplayName("Test createCompany() with invalid data")
     void testCreateCompanyWithInvalidData() throws Exception {
@@ -114,7 +109,6 @@ public class CompanyControllerTest {
                         .content(new ObjectMapper().writeValueAsString(companyRequestDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
-
     @Test
     @DisplayName("Test createCompany() with existing email")
     void testCreateCompanyWithExistingEmail() throws Exception {
@@ -132,8 +126,6 @@ public class CompanyControllerTest {
                         .content(new ObjectMapper().writeValueAsString(companyRequestDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
-
-
     @Test
     @DisplayName("Test updateCompany() with valid data")
     void testUpdateUserWithValidData() throws Exception {
@@ -159,7 +151,6 @@ public class CompanyControllerTest {
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(companyController).build();
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/companies")
-//                        .with(user(userDetails))
                         .with(request -> {
                             request.setUserPrincipal(request.getUserPrincipal());
                             return request;
