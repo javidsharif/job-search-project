@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CompanyDto {
     @NotBlank(message = "name is mandatory")
-    @Pattern(regexp = "^[A-Z][a-zA-Z]*$", message = "Numbers not allowed")
+    @Pattern(regexp = "^[A-Z][a-zA-Z ]*$", message = "Numbers and the first letter starting with a lowercase letter not allowed")
     private String name;
     @NotNull
     @NotBlank(message = "password is mandatory")
