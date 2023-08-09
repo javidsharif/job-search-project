@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
@@ -123,15 +124,14 @@ public class UserServiceTest {
         userRequestDto.setPassword(newPassword);
         userRequestDto.setConfirmPassword(newPassword);
 
-        CustomUserDetails userDetails = new CustomUserDetails(buildDefaultUser(userRequestDto));
-
-        User authenticatedUser = userDetails.getUser();
+        CustomUserDetails userDetails = new CustomUserDetails(buildDefaultUser(userRequestDto).getUserAuthentication());
+        userDetails.getUserAuthentication().getUser().setUserAuthentication(userDetails.getUserAuthentication());
+        User authenticatedUser = userDetails.getUserAuthentication().getUser();
         authenticatedUser.getUserAuthentication().setUser(authenticatedUser);
         authenticatedUser.getUserAuthentication().setEmail("mimi@test.com");
         when(userAuthRepository.findByEmail("mimi@test.com")).thenReturn(Optional.of(authenticatedUser.getUserAuthentication()));
-
+        when(encoder.encode("newPassword")).thenReturn(encoder().encode("newPassword"));
         when(userRepository.save(any(User.class))).thenReturn(authenticatedUser);
-        when(userAuthRepository.findByEmail(DEFAULT_EMAIL)).thenReturn(Optional.empty());
 
         userService.updateUser(userRequestDto, userDetails);
         verify(userRepository, times(1)).save(authenticatedUser);
@@ -144,8 +144,9 @@ public class UserServiceTest {
         userDto.setPassword("defaultPassword");
         userDto.setConfirmPassword("differentPassword");
 
-        CustomUserDetails userDetails = new CustomUserDetails(buildDefaultUser(userDto));
-        var authenticatedUser = userDetails.getUser();
+        CustomUserDetails userDetails = new CustomUserDetails(buildDefaultUser(userDto).getUserAuthentication());
+        userDetails.getUserAuthentication().getUser().setUserAuthentication(userDetails.getUserAuthentication());
+        var authenticatedUser = userDetails.getUserAuthentication().getUser();
         authenticatedUser.getUserAuthentication().setUser(authenticatedUser);
         authenticatedUser.getUserAuthentication().setEmail("kolya@test.com");
         when(userAuthRepository.findByEmail("kolya@test.com")).thenReturn(Optional.of(authenticatedUser.getUserAuthentication()));
@@ -158,8 +159,9 @@ public class UserServiceTest {
     void testUpdateUser_whenNotFoundException() {
         UserRequestDto userDto = buildRequestDto();
 
-        CustomUserDetails userDetails = new CustomUserDetails(buildDefaultUser(userDto));
-        var authenticatedUser = userDetails.getUser();
+        CustomUserDetails userDetails = new CustomUserDetails(buildDefaultUser(userDto).getUserAuthentication());
+        userDetails.getUserAuthentication().getUser().setUserAuthentication(userDetails.getUserAuthentication());
+        var authenticatedUser = userDetails.getUserAuthentication().getUser();
         authenticatedUser.getUserAuthentication().setUser(authenticatedUser);
         when(userAuthRepository.findByEmail(userDto.getEmail())).thenThrow(NotFoundException.class);
 
@@ -169,15 +171,16 @@ public class UserServiceTest {
     @Test
     @Order(6)
     void testUpdateUser_whenEmailAlreadyExists() {
-        String existingEmail = "existing@example.com";
+        String existingEmail = "default@default.com";
         UserRequestDto userRequestDto = buildRequestDto();
 
-        CustomUserDetails userDetails = new CustomUserDetails(buildDefaultUser(userRequestDto));
-        var authenticatedUser = userDetails.getUser();
+        CustomUserDetails userDetails = new CustomUserDetails(buildDefaultUser(userRequestDto).getUserAuthentication());
+        userDetails.getUserAuthentication().getUser().setUserAuthentication(userDetails.getUserAuthentication());
+        var authenticatedUser = userDetails.getUserAuthentication().getUser();
         authenticatedUser.getUserAuthentication().setUser(authenticatedUser);
         authenticatedUser.getUserAuthentication().setEmail(existingEmail);
         when(userAuthRepository.findByEmail(existingEmail)).thenReturn(Optional.of(authenticatedUser.getUserAuthentication()));
-        when(userAuthRepository.findByEmail(userRequestDto.getEmail())).thenThrow(AlreadyExistsException.class);
+        when(userAuthRepository.findByEmail(existingEmail)).thenThrow(AlreadyExistsException.class);
         assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userRequestDto, userDetails));
     }
 

@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 @Data
 public class CompanyRequestDto {
     @NotBlank(message = "Name is mandatory")
-    @Pattern(regexp = "^[A-Z][a-zA-Z]*$", message = "Numbers and the first letter starting with a lowercase letter not allowed")
+    @Pattern(regexp = "^[A-Z][a-zA-Z ]*$", message = "Numbers and the first letter starting with a lowercase letter not allowed")
     private String name;
     @NotNull
     @NotBlank(message = "Password is mandatory")
