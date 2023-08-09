@@ -67,7 +67,7 @@ public class UserControllerTest {
     private final User DEFAULT_USER = buildDefaultUser(DEFAULT_USER_DTO);
 
     private final UserAuthentication DEFAULT_USER_AUTHENTICATION = buildUserAuthentication();
-    private final String DEFAULT_VALUE = "default";
+    private final String DEFAULT_VALUE = "Default";
 
     private final String DEFAULT_EMAIL = "default@default.com";
     private Date DEFAULT_DATE = new Date();
