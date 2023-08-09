@@ -5,11 +5,13 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,7 +47,5 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_authentication_id", referencedColumnName = "id")
     private UserAuthentication userAuthentication;
-
-
 
 }

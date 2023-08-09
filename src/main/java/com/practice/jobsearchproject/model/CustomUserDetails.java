@@ -1,6 +1,7 @@
 package com.practice.jobsearchproject.model;
 
-import com.practice.jobsearchproject.model.entity.UserAuthentication;
+import com.practice.jobsearchproject.model.entity.Company;
+import com.practice.jobsearchproject.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

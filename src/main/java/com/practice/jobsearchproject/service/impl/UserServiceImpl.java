@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         authenticatedUser.setPhotoUrl(userDto.getPhotoUrl());
     }
 
-    private UserAuthentication findByEmail(String email) {
+    public UserAuthentication findByEmail(String email) {
         return userAuthRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(String.format("email with %s not found", email)));
     }
