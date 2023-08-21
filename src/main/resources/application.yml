@@ -16,3 +16,14 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  cloud:
+    gcp:
+      projectId: "job-search-project-395115"
+      credentials:
+        location: "file:C:\\Users\\99451\\Downloads\\job-search-project-395115-3f2f481bfdeb.json"
+  servlet:
+    multipart:
+      max-file-size: 10MB
+gcp:
+  bucket:
+    name: "job-search-bucket"

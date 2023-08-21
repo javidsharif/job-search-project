@@ -14,6 +14,7 @@ import com.practice.jobsearchproject.model.mapper.CompanyMapper;
 import com.practice.jobsearchproject.repository.CompanyRepository;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
 import com.practice.jobsearchproject.service.impl.CompanyServiceImpl;
+import com.practice.jobsearchproject.service.impl.FileServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,9 +23,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,6 +51,9 @@ public class CompanyServiceImplTest {
     RoleService roleService;
     @Mock
     UserAuthenticationRepository userAuthRepository;
+
+    @Mock
+    private FileServiceImpl fileService;
 
     @BeforeEach
     public void setUp() {
@@ -137,7 +146,7 @@ public class CompanyServiceImplTest {
 
     @Test
     @DisplayName("Test CompanyServiceImpl.createCompany() - AlreadyExistsException")
-    void testCreateCompany_AlreadyExists() {
+    void testCreateCompany_AlreadyExists() throws IOException {
         Mockito.when(userAuthRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(new UserAuthentication()));
 
         Role role = new Role("USER");
@@ -148,15 +157,16 @@ public class CompanyServiceImplTest {
         requestDto.setEmail("test@gmail.com");
         requestDto.setPassword("password");
         requestDto.setConfirmPassword("password");
-
-        Assertions.assertThrows(AlreadyExistsException.class, () -> companyService.createCompany(requestDto));
+        MockMultipartFile image = new MockMultipartFile("image", "commands.png", MediaType.MULTIPART_FORM_DATA.toString(),
+                Files.newInputStream(Path.of("src/test/resources/images/commands.png")));
+        Assertions.assertThrows(AlreadyExistsException.class, () -> companyService.createCompany(requestDto,  image));
         Mockito.verify(companyRepository, Mockito.never()).save(Mockito.any(Company.class));
         Mockito.verify(userAuthRepository, Mockito.never()).save(Mockito.any(UserAuthentication.class));
     }
 
     @Test
     @DisplayName("Test CompanyServiceImpl.createCompany() - Successful")
-    void testCreateCompany_Successful() {
+    void testCreateCompany_Successful() throws IOException {
         Mockito.when(userAuthRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 
         Role role = new Role("USER");
@@ -167,8 +177,10 @@ public class CompanyServiceImplTest {
         requestDto.setEmail("test@gmail.com");
         requestDto.setPassword("password");
         requestDto.setConfirmPassword("password");
+        MockMultipartFile image = new MockMultipartFile("image", "commands.png", MediaType.MULTIPART_FORM_DATA.toString(),
+                Files.newInputStream(Path.of("src/test/resources/images/commands.png")));
 
-        Assertions.assertDoesNotThrow(() -> companyService.createCompany(requestDto));
+        Assertions.assertDoesNotThrow(() -> companyService.createCompany(requestDto, image));
 
         Mockito.verify(companyRepository, Mockito.times(1)).save(Mockito.any(Company.class));
         Mockito.verify(userAuthRepository, Mockito.times(1)).save(Mockito.any(UserAuthentication.class));
@@ -176,7 +188,7 @@ public class CompanyServiceImplTest {
 
     @Test
     @DisplayName("Test CompanyServiceImpl.updateCompany() - When Valid CompanyDto")
-    public void updateCompany_whenValidCompanyDto() {
+    public void updateCompany_whenValidCompanyDto() throws IOException {
         CompanyDto companyDto = CompanyDto.builder().name("Cavidan")
                 .telephone("+994 55 555 55 55").cvEmail("test@gmail.com").information("information")
                 .email("test@gmail.com").build();
@@ -203,14 +215,16 @@ public class CompanyServiceImplTest {
 
         Mockito.when(companyRepository.save(Mockito.any(Company.class))).thenReturn(authenticatedCompany);
         Mockito.when(userAuthRepository.findByEmail("cavidan@gmail.com")).thenReturn(Optional.empty());
-
-        companyService.updateCompany(companyDto, customUserDetails);
+        MockMultipartFile image = new MockMultipartFile("image", "commands.png", MediaType.MULTIPART_FORM_DATA.toString(),
+                Files.newInputStream(Path.of("src/test/resources/images/commands.png")));
+        Mockito.when(fileService.deleteFile(Mockito.anyString())).thenReturn(true);
+        companyService.updateCompany(companyDto, image, customUserDetails);
         Mockito.verify(companyRepository, Mockito.times(1)).save(authenticatedCompany);
     }
 
     @Test
     @DisplayName("Test CompanyServiceImpl.testUpdateCompany() - When Password Confirmation Mismatch")
-    void testUpdateCompany_whenPasswordConfirmationMismatch() {
+    void testUpdateCompany_whenPasswordConfirmationMismatch() throws IOException {
         CompanyDto companyDto = new CompanyDto();
         companyDto.setPassword("defaultPassword");
         companyDto.setConfirmPassword("differentPassword");
@@ -229,13 +243,15 @@ public class CompanyServiceImplTest {
         authenticatedCompany.getUserAuthentication().setCompany(authenticatedCompany);
         authenticatedCompany.getUserAuthentication().setEmail("test@gmail.com");
         Mockito.when(userAuthRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(authenticatedCompany.getUserAuthentication()));
+        MockMultipartFile image = new MockMultipartFile("image", "commands.png", MediaType.MULTIPART_FORM_DATA.toString(),
+                Files.newInputStream(Path.of("src/test/resources/images/commands.png")));
 
-        Assertions.assertThrows(PasswordException.class, () -> companyService.updateCompany(companyDto, userDetails));
+        Assertions.assertThrows(PasswordException.class, () -> companyService.updateCompany(companyDto, image, userDetails));
     }
 
     @Test
     @DisplayName("Test CompanyServiceImpl.testUpdateCompany() - When Not Found Exception")
-    void testUpdateCompany_whenNotFoundException() {
+    void testUpdateCompany_whenNotFoundException() throws IOException {
         CompanyDto companyDto = new CompanyDto();
 
         UserAuthentication userAuthentication = new UserAuthentication();
@@ -250,13 +266,15 @@ public class CompanyServiceImplTest {
         authenticatedCompany.setUserAuthentication(userAuthentication);
         authenticatedCompany.getUserAuthentication().setCompany(authenticatedCompany);
         Mockito.when(userAuthRepository.findByEmail(companyDto.getEmail())).thenThrow(NotFoundException.class);
+        MockMultipartFile image = new MockMultipartFile("image", "commands.png", MediaType.MULTIPART_FORM_DATA.toString(),
+                Files.newInputStream(Path.of("src/test/resources/images/commands.png")));
 
-        Assertions.assertThrows(NotFoundException.class, () -> companyService.updateCompany(companyDto, userDetails));
+        Assertions.assertThrows(NotFoundException.class, () -> companyService.updateCompany(companyDto, image, userDetails));
     }
 
     @Test
     @DisplayName("Test CompanyServiceImpl.testUpdateCompany() - When Email Already Exists")
-    void testUpdateCompany_whenEmailAlreadyExists() {
+    void testUpdateCompany_whenEmailAlreadyExists() throws IOException {
         String existingEmail = "existing@gmail.com";
         CompanyDto companyRequestDto = CompanyDto.builder().name("Cavidan")
                 .telephone("+994 55 555 55 55").cvEmail("test@gmail.com").information("information")
@@ -276,6 +294,8 @@ public class CompanyServiceImplTest {
         authenticatedCompany.getUserAuthentication().setEmail(existingEmail);
         Mockito.when(userAuthRepository.findByEmail(existingEmail)).thenReturn(Optional.of(authenticatedCompany.getUserAuthentication()));
         Mockito.when(userAuthRepository.findByEmail(companyRequestDto.getEmail())).thenThrow(AlreadyExistsException.class);
-        Assertions.assertThrows(AlreadyExistsException.class, () -> companyService.updateCompany(companyRequestDto, userDetails));
+        MockMultipartFile image = new MockMultipartFile("image", "commands.png", MediaType.MULTIPART_FORM_DATA.toString(),
+                Files.newInputStream(Path.of("src/test/resources/images/commands.png")));
+        Assertions.assertThrows(AlreadyExistsException.class, () -> companyService.updateCompany(companyRequestDto, image, userDetails));
     }
 }

@@ -16,8 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,11 +30,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 public class CompanyControllerTest {
     @Mock
     private CompanyService companyService;
     @InjectMocks
     private CompanyController companyController;
+
+    ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     public void setUp() {
@@ -78,19 +89,26 @@ public class CompanyControllerTest {
     @Test
     @DisplayName("Test createCompany() with valid data")
     void testCreateCompanyWithValidData() throws Exception {
-        CompanyRequestDto companyRequestDto = new CompanyRequestDto();
-        companyRequestDto.setEmail("cavidan.niyazali@gmail.com");
-        companyRequestDto.setPassword("12345");
-        companyRequestDto.setConfirmPassword("12345");
+        CompanyRequestDto companyDto = new CompanyRequestDto();
+        companyDto.setName("Created Company");
+        companyDto.setEmail("created@gmail.com");
+        companyDto.setPassword("newPassword");
+        companyDto.setConfirmPassword("newPassword");
+        companyDto.setTelephone("+994551234567");
+        companyDto.setCvEmail("created_cv_email@gmail.com");
+        companyDto.setInformation("Created company information");
 
-        Mockito.doNothing().when(companyService).createCompany(Mockito.any(CompanyRequestDto.class));
+        Mockito.doNothing().when(companyService).createCompany(Mockito.eq(companyDto),  Mockito.any());
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(companyController).build();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/companies")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(companyRequestDto)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart(HttpMethod.POST,"/api/v1/companies")
+                .file(new MockMultipartFile("companyRequestDto", "", "application/json", mapper.writeValueAsString(companyDto).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPost = mockMvc.perform(requestBuilderPost).andReturn();
+        assertEquals(HttpStatus.CREATED.value(), mvcResultPost.getResponse().getStatus());
     }
     @Test
     @DisplayName("Test createCompany() with invalid data")
@@ -100,14 +118,18 @@ public class CompanyControllerTest {
         companyRequestDto.setPassword("password");
         companyRequestDto.setConfirmPassword("different_password");
 
-        Mockito.doThrow(new PasswordException("Password is wrong")).when(companyService).createCompany(Mockito.any(CompanyRequestDto.class));
+        Mockito.doThrow(new PasswordException("Password is wrong")).when(companyService).createCompany(Mockito.any(CompanyRequestDto.class),  Mockito.any());
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(companyController).build();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/companies")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(companyRequestDto)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart(HttpMethod.POST,"/api/v1/companies")
+                .file(new MockMultipartFile("companyDto", "", "application/json", mapper.writeValueAsString(companyRequestDto).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPost = mockMvc.perform(requestBuilderPost).andReturn();
+        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResultPost.getResponse().getStatus());
     }
     @Test
     @DisplayName("Test createCompany() with existing email")
@@ -117,14 +139,17 @@ public class CompanyControllerTest {
         companyRequestDto.setPassword("password");
         companyRequestDto.setConfirmPassword("password");
 
-        Mockito.doThrow(new AlreadyExistsException("email already exists")).when(companyService).createCompany(Mockito.any(CompanyRequestDto.class));
+        Mockito.doThrow(new AlreadyExistsException("email already exists")).when(companyService).createCompany(Mockito.any(CompanyRequestDto.class), Mockito.any());
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(companyController).build();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/companies")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(companyRequestDto)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart(HttpMethod.POST,"/api/v1/companies")
+                .file(new MockMultipartFile("companyDto", "", "application/json", mapper.writeValueAsString(companyRequestDto).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPost = mockMvc.perform(requestBuilderPost).andReturn();
+        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResultPost.getResponse().getStatus());
     }
     @Test
     @DisplayName("Test updateCompany() with valid data")
@@ -134,32 +159,31 @@ public class CompanyControllerTest {
         companyDto.setEmail("updated_email@gmail.com");
         companyDto.setPassword("newPassword");
         companyDto.setConfirmPassword("newPassword");
-        companyDto.setTelephone("+994 55 123 45 67");
+        companyDto.setTelephone("+994551234567");
         companyDto.setCvEmail("updated_cv_email@gmail.com");
         companyDto.setInformation("Updated company information");
         companyDto.setPhotoUrl("updated_photo_url");
-        companyDto.setCity("Updated City");
+        companyDto.setCity("Updated");
         companyDto.setFieldOfActivity("Updated Field");
 
         UserAuthentication userAuthentication = new UserAuthentication();
-        userAuthentication.setEmail("test@gmail.com");
-        userAuthentication.setPassword("oldPassword");
+        userAuthentication.setEmail(companyDto.getEmail());
+        userAuthentication.setPassword(companyDto.getPassword());
         CustomUserDetails userDetails = new CustomUserDetails(userAuthentication);
 
-        companyService.updateCompany(Mockito.eq(companyDto), Mockito.eq(userDetails));
+        companyService.updateCompany(Mockito.eq(companyDto), Mockito.any(), Mockito.eq(userDetails));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(companyController).build();
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/companies")
-                        .with(request -> {
-                            request.setUserPrincipal(request.getUserPrincipal());
-                            return request;
-                        })
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(companyDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart(HttpMethod.PUT,"/api/v1/companies")
+                .file(new MockMultipartFile("companyDto", "", "application/json", mapper.writeValueAsString(companyDto).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPut = mockMvc.perform(requestBuilderPost).andReturn();
+        assertEquals(HttpStatus.OK.value(), mvcResultPut.getResponse().getStatus());
     }
-
     @Test
     @DisplayName("Test updateCompany() with invalid data")
     void testUpdateUserWithInvalidData() throws Exception {
