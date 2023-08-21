@@ -11,6 +11,7 @@ import com.practice.jobsearchproject.model.entity.User;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
 import com.practice.jobsearchproject.repository.UserRepository;
+import com.practice.jobsearchproject.service.impl.FileServiceImpl;
 import com.practice.jobsearchproject.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -23,16 +24,20 @@ import org.mockito.Captor;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
@@ -75,16 +80,22 @@ public class UserServiceTest {
     @Captor
     private ArgumentCaptor<User> saveCaptor;
 
+    @Mock
+    private FileServiceImpl fileService;
+
     @Test
     @Order(1)
-    public void createUser_whenValidUserRequestDto() {
+    public void createUser_whenValidUserRequestDto() throws IOException {
         var userRequestDto = buildRequestDto();
         when(userAuthRepository.findByEmail(userRequestDto.getEmail())).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer((i) -> i.getArguments()[0]);
         when(encoder.encode(anyString())).then(i -> encoder().encode((CharSequence) i.getArguments()[0]));
 
         when(roleService.findByName(DEFAULT_USER_NAME)).thenReturn(buildRole());
-        userService.createUser(userRequestDto);
+        MockMultipartFile image = new MockMultipartFile("image", "commands.png", MediaType.MULTIPART_FORM_DATA.toString(),
+                Files.newInputStream(Path.of("src/test/resources/images/commands.png")));
+
+        userService.createUser(userRequestDto, image);
 
         verify(userRepository, times(1)).save(saveCaptor.capture());
         User capturedUser = saveCaptor.getValue();
@@ -99,7 +110,7 @@ public class UserServiceTest {
         when(userAuthRepository.findByEmail(DEFAULT_EMAIL)).thenReturn(Optional.of(DEFAULT_USER_AUTHENTICATION));
         UserRequestDto userRequestDto = DEFAULT_USER_DTO;
 
-        assertThrows(AlreadyExistsException.class, () -> userService.createUser(userRequestDto));
+        assertThrows(AlreadyExistsException.class, () -> userService.createUser(userRequestDto, null));
     }
 
     @Test
@@ -109,7 +120,7 @@ public class UserServiceTest {
         userRequestDto.setConfirmPassword("newDefault");
         when(userAuthRepository.findByEmail(userRequestDto.getEmail())).thenReturn(Optional.empty());
 
-        assertThrows(PasswordException.class, () -> userService.createUser(userRequestDto));
+        assertThrows(PasswordException.class, () -> userService.createUser(userRequestDto, null));
 
         verify(userAuthRepository, times(1)).findByEmail(userRequestDto.getEmail());
         verify(userAuthRepository, never()).save(any(UserAuthentication.class));
@@ -118,7 +129,7 @@ public class UserServiceTest {
 
     @Test
     @Order(4)
-    public void updateUser_whenValidUserRequestDto() {
+    public void updateUser_whenValidUserRequestDto() throws IOException {
         UserRequestDto userRequestDto = buildRequestDto();
         String newPassword = "newPassword";
         userRequestDto.setPassword(newPassword);
@@ -132,8 +143,9 @@ public class UserServiceTest {
         when(userAuthRepository.findByEmail("mimi@test.com")).thenReturn(Optional.of(authenticatedUser.getUserAuthentication()));
         when(encoder.encode("newPassword")).thenReturn(encoder().encode("newPassword"));
         when(userRepository.save(any(User.class))).thenReturn(authenticatedUser);
-
-        userService.updateUser(userRequestDto, userDetails);
+        MockMultipartFile image = new MockMultipartFile("image", "commands.png", MediaType.MULTIPART_FORM_DATA.toString(),
+                Files.newInputStream(Path.of("src/test/resources/images/commands.png")));
+        userService.updateUser(userRequestDto, image, userDetails);
         verify(userRepository, times(1)).save(authenticatedUser);
     }
 
@@ -151,7 +163,7 @@ public class UserServiceTest {
         authenticatedUser.getUserAuthentication().setEmail("kolya@test.com");
         when(userAuthRepository.findByEmail("kolya@test.com")).thenReturn(Optional.of(authenticatedUser.getUserAuthentication()));
 
-        assertThrows(PasswordException.class, () -> userService.updateUser(userDto, userDetails));
+        assertThrows(PasswordException.class, () -> userService.updateUser(userDto, null, userDetails));
     }
 
     @Test
@@ -165,7 +177,7 @@ public class UserServiceTest {
         authenticatedUser.getUserAuthentication().setUser(authenticatedUser);
         when(userAuthRepository.findByEmail(userDto.getEmail())).thenThrow(NotFoundException.class);
 
-        assertThrows(NotFoundException.class, () -> userService.updateUser(userDto, userDetails));
+        assertThrows(NotFoundException.class, () -> userService.updateUser(userDto, null, userDetails));
     }
 
     @Test
@@ -181,7 +193,7 @@ public class UserServiceTest {
         authenticatedUser.getUserAuthentication().setEmail(existingEmail);
         when(userAuthRepository.findByEmail(existingEmail)).thenReturn(Optional.of(authenticatedUser.getUserAuthentication()));
         when(userAuthRepository.findByEmail(existingEmail)).thenThrow(AlreadyExistsException.class);
-        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userRequestDto, userDetails));
+        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userRequestDto,null, userDetails));
     }
 
     private Role buildRole() {

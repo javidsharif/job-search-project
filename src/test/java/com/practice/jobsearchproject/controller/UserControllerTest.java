@@ -9,20 +9,21 @@ import com.practice.jobsearchproject.model.entity.Role;
 import com.practice.jobsearchproject.model.entity.User;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.model.mapper.UserMapperImpl;
-import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
+import com.practice.jobsearchproject.service.FileService;
 import com.practice.jobsearchproject.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -30,7 +31,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +39,6 @@ import java.util.Objects;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,11 +51,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
-    @Mock
-    private UserAuthenticationRepository userAuthRepository;
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private FileService fileService;
 
     private static Long DEFAULT_ID = 1L;
 
@@ -92,14 +91,14 @@ public class UserControllerTest {
     @Test
     @Order(2)
     public void testCreateUser_whenValidRequestUserDto() throws Exception {
-        UserRequestDto requestDto = buildRequestDto();
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/users")
-                        .content(new ObjectMapper().writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
-                .andExpect(status().isCreated());
-        verify(userService).createUser(requestDto);
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart("/api/v1/users")
+                .file(new MockMultipartFile("userDto", "", "application/json", mapper.writeValueAsString(DEFAULT_USER_DTO).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPost = mockMvc.perform(requestBuilderPost).andReturn();
+        assertEquals(HttpStatus.CREATED.value(), mvcResultPost.getResponse().getStatus());
     }
 
     @Test
@@ -107,37 +106,42 @@ public class UserControllerTest {
     public void testCreateUser_whenThrowEmailAlreadyException() throws Exception {
         UserRequestDto userRequestDto = buildRequestDto();
         doThrow(new AlreadyExistsException(String.format("email with %s already exists",
-                userRequestDto.getEmail()))).when(userService).createUser(userRequestDto);
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/users")
-                        .content(new ObjectMapper().writeValueAsString(userRequestDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                userRequestDto.getEmail()))).when(userService).createUser(eq(userRequestDto), any());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart("/api/v1/users")
+                .file(new MockMultipartFile("userDto", "", "application/json", mapper.writeValueAsString(userRequestDto).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPost = mockMvc.perform(requestBuilderPost)
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
         String expected = String.format("email with %s already exists", DEFAULT_EMAIL);
-        String actualErrorMessage = Objects.requireNonNull(mvcResult.getResolvedException()).getMessage();
+        String actualErrorMessage = Objects.requireNonNull(mvcResultPost.getResolvedException()).getMessage();
         assertEquals(expected, actualErrorMessage);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResultPost.getResponse().getStatus());
     }
 
     @Test
     @Order(4)
     public void testCreateUser_whenThrowPasswordException() throws Exception {
         UserRequestDto userRequestDto = buildRequestDto();
-        doThrow(new PasswordException("password is wrong")).when(userService).createUser(userRequestDto);
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/users")
-                        .content(new ObjectMapper().writeValueAsString(userRequestDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+        doThrow(new PasswordException("password is wrong")).when(userService).createUser(eq(userRequestDto), any());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart("/api/v1/users")
+                .file(new MockMultipartFile("userDto", "", "application/json", mapper.writeValueAsString(userRequestDto).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPost = mockMvc.perform(requestBuilderPost)
                 .andExpect(status().isBadRequest())
                 .andReturn();
+
         String expected = "password is wrong";
-        String actualErrorMessage = Objects.requireNonNull(mvcResult.getResolvedException()).getMessage();
+        String actualErrorMessage = Objects.requireNonNull(mvcResultPost.getResolvedException()).getMessage();
         assertEquals(expected, actualErrorMessage);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResultPost.getResponse().getStatus());
     }
 
     @Test
@@ -145,13 +149,14 @@ public class UserControllerTest {
     @WithMockUser(username = "testUser", password = "testPassword", roles = {"USER", "ADMIN"})
     public void testUpdateUser_whenValidUserDtoAndUserDetails() throws Exception {
         UserRequestDto userRequestDto = buildRequestDto();
-        mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/v1/users")
-                        .content(new ObjectMapper().writeValueAsString(userRequestDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
-                .andExpect(status().isOk());
-        verify(userService).updateUser(eq(userRequestDto), any());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart(HttpMethod.PUT,"/api/v1/users")
+                .file(new MockMultipartFile("userDto", "", "application/json", mapper.writeValueAsString(DEFAULT_USER_DTO).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPut = mockMvc.perform(requestBuilderPost).andReturn();
+        assertEquals(HttpStatus.OK.value(), mvcResultPut.getResponse().getStatus());
     }
 
     @Test
@@ -159,37 +164,41 @@ public class UserControllerTest {
     public void testUpdateUser_whenThrowEmailAlreadyExistsException() throws Exception {
         UserRequestDto userRequestDto = buildRequestDto();
         doThrow(new AlreadyExistsException(String.format("email with %s already exists",
-                userRequestDto.getEmail()))).when(userService).updateUser(eq(userRequestDto), any());
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/v1/users")
-                        .content(new ObjectMapper().writeValueAsString(userRequestDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+                userRequestDto.getEmail()))).when(userService).updateUser(eq(userRequestDto), any(), any());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart(HttpMethod.PUT,"/api/v1/users")
+                .file(new MockMultipartFile("userDto", "", "application/json", mapper.writeValueAsString(userRequestDto).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPut = mockMvc.perform(requestBuilderPost)
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
         String expected = String.format("email with %s already exists", DEFAULT_EMAIL);
-        String actualErrorMessage = Objects.requireNonNull(mvcResult.getResolvedException()).getMessage();
+        String actualErrorMessage = Objects.requireNonNull(mvcResultPut.getResolvedException()).getMessage();
         assertEquals(expected, actualErrorMessage);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResultPut.getResponse().getStatus());
     }
 
     @Test
     @Order(7)
     public void testUpdateUser_whenThrowPasswordException() throws Exception {
         UserRequestDto userRequestDto = buildRequestDto();
-        doThrow(new PasswordException("password is wrong")).when(userService).updateUser(eq(userRequestDto), any());
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/v1/users")
-                        .content(new ObjectMapper().writeValueAsString(userRequestDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf()))
+        doThrow(new PasswordException("password is wrong")).when(userService).updateUser(eq(userRequestDto), any(), any());
+        RequestBuilder requestBuilderPost = MockMvcRequestBuilders
+                .multipart(HttpMethod.PUT,"/api/v1/users")
+                .file(new MockMultipartFile("userDto", "", "application/json", mapper.writeValueAsString(userRequestDto).getBytes()))
+                .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult mvcResultPut = mockMvc.perform(requestBuilderPost)
                 .andExpect(status().isBadRequest())
                 .andReturn();
         String expected = "password is wrong";
-        String actualErrorMessage = Objects.requireNonNull(mvcResult.getResolvedException()).getMessage();
+        String actualErrorMessage = Objects.requireNonNull(mvcResultPut.getResolvedException()).getMessage();
         assertEquals(expected, actualErrorMessage);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResultPut.getResponse().getStatus());
     }
 
 

@@ -29,5 +29,4 @@ public class CompanyRequestDto {
     @Email(regexp = "^(.+)@(.+)$", message = "Cv email is wrong")
     private String cvEmail;
     private String information;
-    private String photoUrl;
 }
