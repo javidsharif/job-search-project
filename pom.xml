@@ -51,6 +51,23 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.heroku.api/heroku-api -->
+        <dependency>
+            <groupId>com.heroku.api</groupId>
+            <artifactId>heroku-api</artifactId>
+            <version>0.34</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.heroku.api</groupId>
+            <artifactId>heroku-json-jackson</artifactId>
+            <version>0.25</version>
+        </dependency>
+        <dependency>
+            <groupId>com.heroku.api</groupId>
+            <artifactId>heroku-http-apache</artifactId>
+            <version>0.25</version>
+        </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -106,7 +123,6 @@
             <artifactId>google-cloud-storage</artifactId>
             <version>2.25.0</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.mapstruct</groupId>
