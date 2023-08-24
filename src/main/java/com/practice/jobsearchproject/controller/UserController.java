@@ -31,13 +31,6 @@ public class UserController {
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers().stream().map(userMapper::toUserResponse).collect(Collectors.toList());
     }
-    @GetMapping("/get-data")
-    public ResponseEntity<List<String>> listOfFiles() {
-
-        List<String> files = fileService.listOfFiles();
-
-        return ResponseEntity.ok(files);
-    }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestPart("userDto") @Valid UserRequestDto userDto, @RequestPart("file") MultipartFile file) throws IOException {
@@ -48,13 +41,5 @@ public class UserController {
                            @RequestPart("file") MultipartFile file,
                            @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
     userService.updateUser(userDto, file, userDetails);
-    }
-    @PostMapping("upload")
-    public ResponseEntity<String> uploadFile(
-            @RequestParam MultipartFile file, @RequestBody UserRequestDto userRequestDto) throws IOException {
-
-        fileService.uploadFile(file, userRequestDto);
-
-        return ResponseEntity.ok("File uploaded successfully");
     }
 }

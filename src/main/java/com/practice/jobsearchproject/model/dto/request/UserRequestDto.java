@@ -32,5 +32,4 @@ public class UserRequestDto {
     private String phone;
     private String gender;
     private String city;
-    private String photoUrl;
 }
