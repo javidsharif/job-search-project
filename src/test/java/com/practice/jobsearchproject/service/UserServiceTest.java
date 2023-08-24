@@ -211,7 +211,6 @@ public class UserServiceTest {
                 .city(userRequestDto.getCity())
                 .gender(userRequestDto.getGender())
                 .dateOfBirth(userRequestDto.getDateOfBirth())
-                .photoUrl(userRequestDto.getPhotoUrl())
                 .phone(userRequestDto.getPhone())
                 .createdAt(LocalDateTime.now())
                 .role(buildRole())
@@ -238,7 +237,6 @@ public class UserServiceTest {
         userRequestDto.setGender(DEFAULT_VALUE);
         userRequestDto.setPassword(DEFAULT_VALUE);
         userRequestDto.setConfirmPassword(DEFAULT_VALUE);
-        userRequestDto.setPhotoUrl(DEFAULT_VALUE);
         return userRequestDto;
     }
 
