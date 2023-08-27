@@ -1,12 +1,16 @@
 package com.practice.jobsearchproject.service.impl;
 
+import com.practice.jobsearchproject.config.JwtTokenUtil;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
 import com.practice.jobsearchproject.model.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
+import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
+import com.practice.jobsearchproject.model.dto.response.CompanyAuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
+import com.practice.jobsearchproject.model.dto.response.UserAuthenticationResponse;
 import com.practice.jobsearchproject.model.entity.Company;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.model.mapper.CompanyMapper;
@@ -16,6 +20,8 @@ import com.practice.jobsearchproject.service.CompanyService;
 import com.practice.jobsearchproject.service.RoleService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +32,27 @@ import java.util.stream.Collectors;
 @Service
 @Data
 @RequiredArgsConstructor
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final UserAuthenticationRepository userAuthRepository;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Override
     public List<CompanyResponseDto> getAllCompanies() {
         List<Company> companies = companyRepository.findAll();
+        log.info("Fetching all companies");
         return companies.stream()
                 .map(companyMapper::convertToCompanyResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void createCompany(CompanyRequestDto companyRequestDto) {
+    public AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto) {
         if (userAuthRepository.findByEmail(companyRequestDto.getEmail()).isPresent()) {
             throw new AlreadyExistsException(String.format("email with %s already exists", companyRequestDto.getEmail()));
         }
@@ -56,6 +66,12 @@ public class CompanyServiceImpl implements CompanyService {
         company.setRole(roleService.findByName("USER"));
         companyRepository.save(company);
         userAuthRepository.save(userAuth);
+        log.info("Creating new company {}", company.getName());
+
+        final UserDetails userDetails = customUserDetailsService
+                .loadUserByUsername(companyRequestDto.getEmail());
+        final var token = jwtTokenUtil.generateToken(userDetails);
+        return CompanyAuthenticationResponse.builder().token(token).company(companyMapper.convertToCompanyResponseDto(company)).build();
     }
 
     @Override
@@ -71,6 +87,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
         fillCompany(companyDto, authenticatedCompany);
         companyRepository.save(authenticatedCompany);
+        log.info("Updating the company {}", authenticatedCompany.getName());
     }
 
     private Company getCompany(CompanyRequestDto companyRequestDto) {

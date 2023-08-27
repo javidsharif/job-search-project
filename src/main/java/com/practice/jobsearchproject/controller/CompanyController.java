@@ -3,6 +3,7 @@ package com.practice.jobsearchproject.controller;
 import com.practice.jobsearchproject.model.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
+import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
 import com.practice.jobsearchproject.service.CompanyService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,8 @@ public class CompanyController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCompany(@Valid @RequestBody CompanyRequestDto companyRequestDto) {
-        companyService.createCompany(companyRequestDto);
+    public AuthenticationResponse createCompany(@Valid @RequestBody CompanyRequestDto companyRequestDto) {
+        return companyService.createCompany(companyRequestDto);
     }
 
     @PutMapping

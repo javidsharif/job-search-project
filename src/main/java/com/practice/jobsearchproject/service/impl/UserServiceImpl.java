@@ -1,18 +1,26 @@
 package com.practice.jobsearchproject.service.impl;
 
+import com.practice.jobsearchproject.config.JwtTokenUtil;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
 import com.practice.jobsearchproject.model.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
+//import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
+//import com.practice.jobsearchproject.model.dto.response.UserAuthenticationResponse;
+import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
+import com.practice.jobsearchproject.model.dto.response.UserAuthenticationResponse;
 import com.practice.jobsearchproject.model.entity.User;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
+import com.practice.jobsearchproject.model.mapper.UserMapper;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
 import com.practice.jobsearchproject.repository.UserRepository;
 import com.practice.jobsearchproject.service.RoleService;
 import com.practice.jobsearchproject.service.UserService;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,21 +29,25 @@ import java.util.List;
 
 @Service
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
-
+    private final UserMapper userMapper;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final CustomUserDetailsService customUserDetailsService;
     private final UserAuthenticationRepository userAuthRepository;
 
     @Override
     public List<User> getAllUsers() {
+        log.info("Fetching all users");
         return userRepository.findAll();
     }
 
     @Override
-    public void createUser(UserRequestDto userDto) {
+    public AuthenticationResponse createUser(UserRequestDto userDto) {
         if (userAuthRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new AlreadyExistsException("email already exists");
         }
@@ -49,6 +61,12 @@ public class UserServiceImpl implements UserService {
         user.setRole(roleService.findByName("USER"));
         save(user);
         userAuthRepository.save(userAuth);
+        log.info("Creating new user {}", user.getName());
+
+        final UserDetails userDetails = customUserDetailsService
+                .loadUserByUsername(userDto.getEmail());
+        final var token = jwtTokenUtil.generateToken(userDetails);
+        return UserAuthenticationResponse.builder().token(token).user(userMapper.toUserResponse(user)).build();
     }
 
     @Override
@@ -64,6 +82,7 @@ public class UserServiceImpl implements UserService {
         }
         fillUser(userDto, authenticatedUser);
         save(authenticatedUser);
+        log.info("Updating the user {}", authenticatedUser.getName());
     }
 
     private User getUser(UserRequestDto userDto) {

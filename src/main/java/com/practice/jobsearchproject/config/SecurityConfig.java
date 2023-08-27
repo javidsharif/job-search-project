@@ -5,30 +5,24 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @AllArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableWebSecurity
 public class SecurityConfig {
-    private final DataSource dataSource;
     private final CustomUserDetailsService customUserDetailsService;
+    private final AuthenticationProvider authenticationProvider;
+    private final JwtRequestFilter jwtRequestFilter;
+    //    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",
@@ -45,51 +39,21 @@ public class SecurityConfig {
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .failureUrl("/login?error")
-                .loginPage("/login").permitAll()
-                .and()
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/?logout").permitAll()
-                .and()
-                .httpBasic();
+                .anyRequest().authenticated().and()
+                .authenticationProvider(authenticationProvider)
+//                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
+                // Add a filter to validate the tokens with every request
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//                .formLogin()
+//                .failureUrl("/login?error")
+//                .loginPage("/login").permitAll()
+//                .and()
+//                .logout()
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+//                .logoutSuccessUrl("/?logout").permitAll()
+//                .and()
+//                .httpBasic();
 
         return http.build();
-    }
-
-    public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(dataSource);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        final var authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(customUserDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://job-search-project-78cb5c6d6611.herokuapp.com",
-                                                        "http://localhost:8080",
-                                                         "http://127.0.0.1:5500",
-                                                            "http://localhost:5173"));
-        configuration.setAllowedMethods(List.of("*"));
-        configuration.setAllowedHeaders(List.of("*"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        configuration.setAllowCredentials(true);
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 }

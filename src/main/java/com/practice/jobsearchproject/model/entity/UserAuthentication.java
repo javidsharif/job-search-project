@@ -25,6 +25,9 @@ public class UserAuthentication {
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
+    @OneToOne(mappedBy = "userAuthentication")
+    private VerificationToken verificationToken;
+
     public UserAuthentication(String email, String password, User user) {
         this.email = email;
         this.password = password;

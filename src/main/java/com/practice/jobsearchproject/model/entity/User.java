@@ -37,6 +37,7 @@ public class User {
 
     private LocalDateTime createdAt;
 
+//    @ManyToOne(fetch = FetchType.EAGER)
     @ManyToOne
     @JoinTable(
             name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
