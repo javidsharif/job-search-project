@@ -12,8 +12,8 @@ import java.util.List;
 public interface UserService {
     List<User> getAllUsers();
 
-    AuthenticationResponse createUser(UserRequestDto userDto);
-    void createUser(UserRequestDto userDto, MultipartFile file) throws IOException;
+//    AuthenticationResponse createUser(UserRequestDto userDto);
+AuthenticationResponse createUser(UserRequestDto userDto, MultipartFile file) throws IOException;
 
     void updateUser(UserRequestDto userDto, MultipartFile file, CustomUserDetails userDetails) throws IOException;
 }

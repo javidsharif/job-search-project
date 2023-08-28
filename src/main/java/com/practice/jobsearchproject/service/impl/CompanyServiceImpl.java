@@ -10,7 +10,6 @@ import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
 import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.CompanyAuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
-import com.practice.jobsearchproject.model.dto.response.UserAuthenticationResponse;
 import com.practice.jobsearchproject.model.entity.Company;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.model.mapper.CompanyMapper;
@@ -58,8 +57,8 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto) {
-    public void createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException {
+//    public AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto) {
+    public AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException {
         if (userAuthRepository.findByEmail(companyRequestDto.getEmail()).isPresent()) {
             throw new AlreadyExistsException(String.format("email with %s already exists", companyRequestDto.getEmail()));
         }
@@ -71,7 +70,7 @@ public class CompanyServiceImpl implements CompanyService {
         company.setUserAuthentication(userAuth);
         userAuth.setCompany(company);
         company.setRole(roleService.findByName("USER"));
-        if(file != null && !file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             fileService.uploadFile(file, company);
         }
         companyRepository.save(company);
@@ -83,6 +82,7 @@ public class CompanyServiceImpl implements CompanyService {
         final var token = jwtTokenUtil.generateToken(userDetails);
         return CompanyAuthenticationResponse.builder().token(token).company(companyMapper.convertToCompanyResponseDto(company)).build();
     }
+
     @Override
     public void updateCompany(CompanyDto companyDto, MultipartFile file, CustomUserDetails companyDetails) throws IOException {
         String newPassword = companyDto.getPassword();

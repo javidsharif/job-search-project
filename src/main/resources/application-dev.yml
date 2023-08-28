@@ -27,8 +27,6 @@
 #    port: 587
 ##    username: ${env.EMAIL_USERNAME}
 ##    password: ${env.EMAIL_PASSWORD}
-#    username: cavidan.niyazali@gmail.com
-#    password: piiiyuykjanptdqk
 #    properties:
 #      mail:
 #        smtp:

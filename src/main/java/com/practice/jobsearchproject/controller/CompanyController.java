@@ -30,10 +30,10 @@ public class CompanyController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthenticationResponse createCompany(@Valid @RequestBody CompanyRequestDto companyRequestDto) {
-        return companyService.createCompany(companyRequestDto);
-    public void createCompany(@Valid @RequestPart("companyRequestDto") CompanyRequestDto companyRequestDto, @RequestPart("file") MultipartFile file) throws IOException {
-        companyService.createCompany(companyRequestDto, file);
+//    public AuthenticationResponse createCompany(@Valid @RequestBody CompanyRequestDto companyRequestDto) {
+//        return companyService.createCompany(companyRequestDto);
+    public AuthenticationResponse createCompany(@Valid @RequestPart("companyRequestDto") CompanyRequestDto companyRequestDto, @RequestPart("file") MultipartFile file) throws IOException {
+        return companyService.createCompany(companyRequestDto, file);
     }
 
     @PutMapping

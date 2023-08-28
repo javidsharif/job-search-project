@@ -15,8 +15,8 @@ import java.util.List;
 public interface CompanyService {
     List<CompanyResponseDto> getAllCompanies();
 
-    AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto);
-    void createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException;
+//    AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto);
+    AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException;
 
     void updateCompany(CompanyDto companyDto, MultipartFile file, CustomUserDetails customUserDetails) throws IOException;
 }

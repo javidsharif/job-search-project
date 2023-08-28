@@ -6,8 +6,6 @@ import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
 import com.practice.jobsearchproject.model.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
-//import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
-//import com.practice.jobsearchproject.model.dto.response.UserAuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.UserAuthenticationResponse;
 import com.practice.jobsearchproject.model.entity.User;
@@ -18,8 +16,8 @@ import com.practice.jobsearchproject.repository.UserRepository;
 import com.practice.jobsearchproject.service.FileService;
 import com.practice.jobsearchproject.service.RoleService;
 import com.practice.jobsearchproject.service.UserService;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +31,7 @@ import java.util.Optional;
 
 @Service
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -44,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final CustomUserDetailsService customUserDetailsService;
     private final FileService fileService;
     private final UserAuthenticationRepository userAuthRepository;
+
     @Override
     public List<User> getAllUsers() {
         log.info("Fetching all users");
@@ -51,8 +50,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthenticationResponse createUser(UserRequestDto userDto) {
-    public void createUser(UserRequestDto userDto, MultipartFile file) throws IOException {
+//    public AuthenticationResponse createUser(UserRequestDto userDto) {
+    public AuthenticationResponse createUser(UserRequestDto userDto, MultipartFile file) throws IOException {
         if (userAuthRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new AlreadyExistsException("email already exists");
         }
@@ -64,7 +63,7 @@ public class UserServiceImpl implements UserService {
         user.setUserAuthentication(userAuth);
         userAuth.setUser(user);
         user.setRole(roleService.findByName("USER"));
-        if(file != null && !file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             fileService.uploadFile(file, user);
         }
         save(user);

@@ -37,7 +37,6 @@
 //        } catch (MessagingException e) {
 //            throw new RuntimeException(e);
 //        }
-//
 //        return mimeMessage;
 //    }
 //
