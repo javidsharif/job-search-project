@@ -2,7 +2,6 @@ package com.practice.jobsearchproject.controller;
 
 import com.practice.jobsearchproject.model.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
-//import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.UserResponse;
 import com.practice.jobsearchproject.model.mapper.UserMapper;
@@ -31,17 +30,11 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public void createUser(@Valid @RequestBody UserRequestDto userDto) {
-//        userService.createUser(userDto);
-//    }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AuthenticationResponse createUser(@Valid @RequestBody UserRequestDto userDto) {
         return userService.createUser(userDto);
     }
-
 
     @PutMapping
     public void updateUser(@Valid @RequestBody UserRequestDto userDto,
