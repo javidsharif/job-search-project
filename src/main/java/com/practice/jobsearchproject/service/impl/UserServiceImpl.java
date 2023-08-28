@@ -15,6 +15,7 @@ import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.model.mapper.UserMapper;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
 import com.practice.jobsearchproject.repository.UserRepository;
+import com.practice.jobsearchproject.service.FileService;
 import com.practice.jobsearchproject.service.RoleService;
 import com.practice.jobsearchproject.service.UserService;
 import lombok.AllArgsConstructor;
@@ -23,9 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Data
@@ -38,8 +42,8 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final JwtTokenUtil jwtTokenUtil;
     private final CustomUserDetailsService customUserDetailsService;
+    private final FileService fileService;
     private final UserAuthenticationRepository userAuthRepository;
-
     @Override
     public List<User> getAllUsers() {
         log.info("Fetching all users");
@@ -48,6 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AuthenticationResponse createUser(UserRequestDto userDto) {
+    public void createUser(UserRequestDto userDto, MultipartFile file) throws IOException {
         if (userAuthRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new AlreadyExistsException("email already exists");
         }
@@ -59,6 +64,9 @@ public class UserServiceImpl implements UserService {
         user.setUserAuthentication(userAuth);
         userAuth.setUser(user);
         user.setRole(roleService.findByName("USER"));
+        if(file != null && !file.isEmpty()) {
+            fileService.uploadFile(file, user);
+        }
         save(user);
         userAuthRepository.save(userAuth);
         log.info("Creating new user {}", user.getName());
@@ -70,7 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UserRequestDto userDto, CustomUserDetails userDetails) {
+    public void updateUser(UserRequestDto userDto, MultipartFile file, CustomUserDetails userDetails) throws IOException {
         String newPassword = userDto.getPassword();
         String confirmedPassword = userDto.getConfirmPassword();
         User authenticatedUser = findByEmail(userDetails.getUsername()).getUser();
@@ -79,6 +87,14 @@ public class UserServiceImpl implements UserService {
         }
         if (!newPassword.equals(authenticatedUser.getUserAuthentication().getPassword())) {
             authenticatedUser.getUserAuthentication().setPassword(passwordEncoder.encode(newPassword));
+        }
+        if (file != null && !file.isEmpty()) {
+            Optional.ofNullable(authenticatedUser.getPhotoUrl())
+                    .filter(photoUrl -> !photoUrl.isEmpty())
+                    .map(photoUrl -> photoUrl.substring(photoUrl.lastIndexOf('/') + 1))
+                    .ifPresent(fileService::deleteFile);
+
+            fileService.uploadFile(file, authenticatedUser);
         }
         fillUser(userDto, authenticatedUser);
         save(authenticatedUser);
@@ -93,7 +109,6 @@ public class UserServiceImpl implements UserService {
                 .dateOfBirth(userDto.getDateOfBirth())
                 .gender(userDto.getGender())
                 .phone(userDto.getPhone())
-                .photoUrl(userDto.getPhotoUrl())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
@@ -115,7 +130,6 @@ public class UserServiceImpl implements UserService {
         }
         authenticatedUser.setPhone(userDto.getPhone());
         authenticatedUser.setGender(userDto.getGender());
-        authenticatedUser.setPhotoUrl(userDto.getPhotoUrl());
     }
 
     public UserAuthentication findByEmail(String email) {

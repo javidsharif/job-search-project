@@ -15,4 +15,5 @@ public class UserResponse {
     private Date dateOfBirth;
 
     private RoleDto role;
+    private String photoUrl;
 }

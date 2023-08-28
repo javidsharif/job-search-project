@@ -20,6 +20,15 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  cloud:
+    gcp:
+      projectId: "job-search-project-395115"
+  servlet:
+    multipart:
+      max-file-size: 10MB
+gcp:
+  bucket:
+    name: "job-search-bucket"
 security:
   jwt:
     secret: 68566D597133743677397A24432646294A404D635166546A576E5A7234753778

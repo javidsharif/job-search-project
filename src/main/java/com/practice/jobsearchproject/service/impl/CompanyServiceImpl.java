@@ -17,6 +17,7 @@ import com.practice.jobsearchproject.model.mapper.CompanyMapper;
 import com.practice.jobsearchproject.repository.CompanyRepository;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
 import com.practice.jobsearchproject.service.CompanyService;
+import com.practice.jobsearchproject.service.FileService;
 import com.practice.jobsearchproject.service.RoleService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +46,8 @@ public class CompanyServiceImpl implements CompanyService {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
+    private final FileService fileService;
+
     @Override
     public List<CompanyResponseDto> getAllCompanies() {
         List<Company> companies = companyRepository.findAll();
@@ -53,6 +59,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto) {
+    public void createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException {
         if (userAuthRepository.findByEmail(companyRequestDto.getEmail()).isPresent()) {
             throw new AlreadyExistsException(String.format("email with %s already exists", companyRequestDto.getEmail()));
         }
@@ -64,6 +71,9 @@ public class CompanyServiceImpl implements CompanyService {
         company.setUserAuthentication(userAuth);
         userAuth.setCompany(company);
         company.setRole(roleService.findByName("USER"));
+        if(file != null && !file.isEmpty()) {
+            fileService.uploadFile(file, company);
+        }
         companyRepository.save(company);
         userAuthRepository.save(userAuth);
         log.info("Creating new company {}", company.getName());
@@ -73,9 +83,8 @@ public class CompanyServiceImpl implements CompanyService {
         final var token = jwtTokenUtil.generateToken(userDetails);
         return CompanyAuthenticationResponse.builder().token(token).company(companyMapper.convertToCompanyResponseDto(company)).build();
     }
-
     @Override
-    public void updateCompany(CompanyDto companyDto, CustomUserDetails companyDetails) {
+    public void updateCompany(CompanyDto companyDto, MultipartFile file, CustomUserDetails companyDetails) throws IOException {
         String newPassword = companyDto.getPassword();
         String confirmedPassword = companyDto.getConfirmPassword();
         Company authenticatedCompany = findByEmail(companyDetails.getUsername()).getCompany();
@@ -85,6 +94,15 @@ public class CompanyServiceImpl implements CompanyService {
         if (!newPassword.equals(authenticatedCompany.getUserAuthentication().getPassword())) {
             authenticatedCompany.getUserAuthentication().setPassword(passwordEncoder.encode(newPassword));
         }
+        if (file != null && !file.isEmpty()) {
+            Optional.ofNullable(authenticatedCompany.getPhotoUrl())
+                    .filter(photoUrl -> !photoUrl.isEmpty())
+                    .map(photoUrl -> photoUrl.substring(photoUrl.lastIndexOf('/') + 1))
+                    .ifPresent(fileService::deleteFile);
+
+            fileService.uploadFile(file, authenticatedCompany);
+        }
+
         fillCompany(companyDto, authenticatedCompany);
         companyRepository.save(authenticatedCompany);
         log.info("Updating the company {}", authenticatedCompany.getName());
@@ -96,7 +114,6 @@ public class CompanyServiceImpl implements CompanyService {
                 .telephone(companyRequestDto.getTelephone())
                 .cvEmail(companyRequestDto.getCvEmail())
                 .information(companyRequestDto.getInformation())
-                .photoUrl(companyRequestDto.getPhotoUrl())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
@@ -121,7 +138,6 @@ public class CompanyServiceImpl implements CompanyService {
         authenticatedCompany.setTelephone(companyDto.getTelephone());
         authenticatedCompany.setCvEmail(companyDto.getCvEmail());
         authenticatedCompany.setInformation(companyDto.getInformation());
-        authenticatedCompany.setPhotoUrl(companyDto.getPhotoUrl());
         authenticatedCompany.setCity(companyDto.getCity());
         authenticatedCompany.setFieldOfActivity(companyDto.getFieldOfActivity());
         authenticatedCompany.setFoundationDate(companyDto.getFoundationDate());
