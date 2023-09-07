@@ -1,10 +1,10 @@
 package com.practice.jobsearchproject.service;
 
-import com.practice.jobsearchproject.config.SecurityConfig;
+import com.practice.jobsearchproject.config.security.SecurityConfig;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
 import com.practice.jobsearchproject.model.entity.Role;
 import com.practice.jobsearchproject.model.entity.User;

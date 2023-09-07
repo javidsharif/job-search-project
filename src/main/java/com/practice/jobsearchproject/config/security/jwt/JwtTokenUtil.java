@@ -1,4 +1,4 @@
-package com.practice.jobsearchproject.config;
+package com.practice.jobsearchproject.config.security.jwt;
 
 import java.io.Serializable;
 import java.security.Key;

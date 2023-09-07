@@ -1,14 +1,13 @@
 package com.practice.jobsearchproject.service.impl;
 
-import com.practice.jobsearchproject.config.JwtTokenUtil;
+import com.practice.jobsearchproject.config.security.jwt.JwtTokenUtil;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetailsService;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
-import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
-import com.practice.jobsearchproject.model.dto.response.CompanyAuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
 import com.practice.jobsearchproject.model.entity.Company;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
@@ -44,7 +43,6 @@ public class CompanyServiceImpl implements CompanyService {
     private final UserAuthenticationRepository userAuthRepository;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
-
     private final FileService fileService;
 
     @Override
@@ -57,8 +55,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-//    public AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto) {
-    public AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException {
+    public void createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException {
         if (userAuthRepository.findByEmail(companyRequestDto.getEmail()).isPresent()) {
             throw new AlreadyExistsException(String.format("email with %s already exists", companyRequestDto.getEmail()));
         }
@@ -76,11 +73,6 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.save(company);
         userAuthRepository.save(userAuth);
         log.info("Creating new company {}", company.getName());
-
-        final UserDetails userDetails = customUserDetailsService
-                .loadUserByUsername(companyRequestDto.getEmail());
-        final var token = jwtTokenUtil.generateToken(userDetails);
-        return CompanyAuthenticationResponse.builder().token(token).company(companyMapper.convertToCompanyResponseDto(company)).build();
     }
 
     @Override
@@ -131,9 +123,6 @@ public class CompanyServiceImpl implements CompanyService {
         authenticatedCompany.setName(companyDto.getName());
         if (!authenticatedCompany.getUserAuthentication().getEmail().equals(companyDto.getEmail())) {
             authenticatedCompany.getUserAuthentication().setEmail(companyDto.getEmail());
-        }
-        if (!authenticatedCompany.getUserAuthentication().getPassword().equals(companyDto.getPassword())) {
-            authenticatedCompany.getUserAuthentication().setPassword(passwordEncoder.encode(companyDto.getPassword()));
         }
         authenticatedCompany.setTelephone(companyDto.getTelephone());
         authenticatedCompany.setCvEmail(companyDto.getCvEmail());

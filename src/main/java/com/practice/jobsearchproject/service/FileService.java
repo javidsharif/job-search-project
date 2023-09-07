@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface FileService {
     <T> void uploadFile(MultipartFile file, T data) throws IOException;
+
     ByteArrayResource downloadFile(String fileName);
 
     List<String> listOfFiles();

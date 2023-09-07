@@ -1,6 +1,6 @@
 package com.practice.jobsearchproject.config;
 
-import com.practice.jobsearchproject.service.impl.CustomUserDetailsService;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ApplicationConfig {
     private final CustomUserDetailsService customUserDetailsService;
-//    private final DataSource dataSource;
-
-//    public void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
-//        auth.jdbcAuthentication()
-//                .dataSource(dataSource);
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

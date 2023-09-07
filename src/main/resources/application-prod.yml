@@ -10,16 +10,29 @@ spring:
 #  jpa:
 #    hibernate:
 #      ddl-auto: none
-#
-#  ###### Email Properties ######
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: ${EMAIL_USERNAME}
-#    password: ${EMAIL_PASSWORD}
+
+  ###### Email Properties ######
+  mail:
+    host: ${EMAIL_HOST}
+    port: ${EMAIL_PORT}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
 #    properties:
 #      mail:
 #        smtp:
 #          auth: true
 #          starttls:
 #            enable: true
+#  cloud:
+#    gcp:
+#      projectId: "job-search-project-395115"
+#  servlet:
+#    multipart:
+#      max-file-size: 10MB
+#gcp:
+#  bucket:
+#    name: "job-search-bucket"
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+

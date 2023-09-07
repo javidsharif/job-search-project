@@ -1,6 +1,7 @@
-package com.practice.jobsearchproject.config;
+package com.practice.jobsearchproject.config.security;
 
-import com.practice.jobsearchproject.service.impl.CustomUserDetailsService;
+import com.practice.jobsearchproject.config.security.jwt.JwtAuthenticationEntryPoint;
+import com.practice.jobsearchproject.config.security.jwt.JwtRequestFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig {
-    private final CustomUserDetailsService customUserDetailsService;
     private final AuthenticationProvider authenticationProvider;
     private final JwtRequestFilter jwtRequestFilter;
-    //    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",
@@ -37,22 +37,20 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers(HttpMethod.POST, "/api/v1/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
-                .anyRequest().authenticated().and()
+                .antMatchers(HttpMethod.POST, "/api/v1/companies/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
+                .antMatchers("/api/v1/companies/**").authenticated()
+                .antMatchers("/api/v1/mail/**").authenticated()
+                .antMatchers("/api/v1/roles/**").permitAll()
+                .antMatchers("/api/v1/auth/**").authenticated()
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
+                .antMatchers("/api/v1/users/**").authenticated()
+                .and()
                 .authenticationProvider(authenticationProvider)
-//                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
-                // Add a filter to validate the tokens with every request
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-//                .formLogin()
-//                .failureUrl("/login?error")
-//                .loginPage("/login").permitAll()
-//                .and()
-//                .logout()
-//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                .logoutSuccessUrl("/?logout").permitAll()
-//                .and()
-//                .httpBasic();
 
         return http.build();
     }

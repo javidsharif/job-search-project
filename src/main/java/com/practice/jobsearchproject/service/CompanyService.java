@@ -1,6 +1,6 @@
 package com.practice.jobsearchproject.service;
 
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
 import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
@@ -15,8 +15,7 @@ import java.util.List;
 public interface CompanyService {
     List<CompanyResponseDto> getAllCompanies();
 
-//    AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto);
-    AuthenticationResponse createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException;
+    void createCompany(CompanyRequestDto companyRequestDto, MultipartFile file) throws IOException;
 
     void updateCompany(CompanyDto companyDto, MultipartFile file, CustomUserDetails customUserDetails) throws IOException;
 }

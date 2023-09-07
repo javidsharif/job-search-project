@@ -29,6 +29,7 @@ public class UserRequestDto {
     @Email(message = "Email is wrong")
     private String email;
     private Date dateOfBirth;
+//    @Pattern(regexp = "\\d{3}\\s\\d{2}\\s\\d{3}\\s\\d{2}\\s\\d{2}", message = "Telephone is wrong")
     private String phone;
     private String gender;
     private String city;

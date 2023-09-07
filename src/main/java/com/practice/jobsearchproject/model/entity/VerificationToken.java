@@ -16,16 +16,12 @@ import java.util.UUID;
 @Entity
 @Table(name = "verification_token")
 public class VerificationToken {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String token;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date expiredDate;
 

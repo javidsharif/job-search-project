@@ -1,13 +1,12 @@
 package com.practice.jobsearchproject.service.impl;
 
-import com.practice.jobsearchproject.config.JwtTokenUtil;
+import com.practice.jobsearchproject.config.security.jwt.JwtTokenUtil;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetailsService;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
-import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
-import com.practice.jobsearchproject.model.dto.response.UserAuthenticationResponse;
 import com.practice.jobsearchproject.model.entity.User;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.model.mapper.UserMapper;
@@ -19,7 +18,6 @@ import com.practice.jobsearchproject.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,8 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-//    public AuthenticationResponse createUser(UserRequestDto userDto) {
-    public AuthenticationResponse createUser(UserRequestDto userDto, MultipartFile file) throws IOException {
+    public void createUser(UserRequestDto userDto, MultipartFile file) throws IOException {
         if (userAuthRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new AlreadyExistsException("email already exists");
         }
@@ -69,11 +66,6 @@ public class UserServiceImpl implements UserService {
         save(user);
         userAuthRepository.save(userAuth);
         log.info("Creating new user {}", user.getName());
-
-        final UserDetails userDetails = customUserDetailsService
-                .loadUserByUsername(userDto.getEmail());
-        final var token = jwtTokenUtil.generateToken(userDetails);
-        return UserAuthenticationResponse.builder().token(token).user(userMapper.toUserResponse(user)).build();
     }
 
     @Override
@@ -123,9 +115,6 @@ public class UserServiceImpl implements UserService {
         authenticatedUser.setDateOfBirth(userDto.getDateOfBirth());
         if (!authenticatedUser.getUserAuthentication().getEmail().equals(userDto.getEmail())) {
             authenticatedUser.getUserAuthentication().setEmail(userDto.getEmail());
-        }
-        if (!authenticatedUser.getUserAuthentication().getPassword().equals(userDto.getPassword())) {
-            authenticatedUser.getUserAuthentication().setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
         authenticatedUser.setPhone(userDto.getPhone());
         authenticatedUser.setGender(userDto.getGender());

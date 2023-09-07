@@ -1,8 +1,7 @@
 package com.practice.jobsearchproject.controller;
 
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
-import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.UserResponse;
 import com.practice.jobsearchproject.model.mapper.UserMapper;
 import com.practice.jobsearchproject.service.FileService;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserMapper userMapper;
     private final UserService userService;
-
     private final FileService fileService;
 
     @GetMapping
@@ -37,10 +35,8 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    public AuthenticationResponse createUser(@Valid @RequestBody UserRequestDto userDto) {
-//        return userService.createUser(userDto);
-    public AuthenticationResponse createUser(@RequestPart("userDto") @Valid UserRequestDto userDto, @RequestPart("file") MultipartFile file) throws IOException {
-        return userService.createUser(userDto, file);
+    public void createUser(@RequestPart("userDto") @Valid UserRequestDto userDto, @RequestPart("file") MultipartFile file) throws IOException {
+        userService.createUser(userDto, file);
     }
 
     @PutMapping

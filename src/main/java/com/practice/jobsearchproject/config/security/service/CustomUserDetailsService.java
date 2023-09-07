@@ -1,6 +1,5 @@
-package com.practice.jobsearchproject.service.impl;
+package com.practice.jobsearchproject.config.security.service;
 
-import com.practice.jobsearchproject.model.CustomUserDetails;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
 import lombok.AllArgsConstructor;
@@ -11,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserAuthenticationRepository userAuthRepository;
 

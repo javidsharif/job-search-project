@@ -1,6 +1,6 @@
 package com.practice.jobsearchproject.controller;
 
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
 import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
@@ -30,10 +30,8 @@ public class CompanyController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    public AuthenticationResponse createCompany(@Valid @RequestBody CompanyRequestDto companyRequestDto) {
-//        return companyService.createCompany(companyRequestDto);
-    public AuthenticationResponse createCompany(@Valid @RequestPart("companyRequestDto") CompanyRequestDto companyRequestDto, @RequestPart("file") MultipartFile file) throws IOException {
-        return companyService.createCompany(companyRequestDto, file);
+    public void createCompany(@Valid @RequestPart("companyRequestDto") CompanyRequestDto companyRequestDto, @RequestPart("file") MultipartFile file) throws IOException {
+        companyService.createCompany(companyRequestDto, file);
     }
 
     @PutMapping

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyAuthenticationResponse extends AuthenticationResponse{
+public class CompanyAuthenticationResponse extends AuthenticationResponse {
     private String token;
     private CompanyResponseDto company;
 }

@@ -1,6 +1,6 @@
 //package com.practice.jobsearchproject.controller;
 //
-//import com.practice.jobsearchproject.model.CustomUserDetails;
+//import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 //import com.practice.jobsearchproject.model.dto.RoleDto;
 //import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
 //import com.practice.jobsearchproject.model.dto.response.UserResponse;
@@ -56,7 +56,7 @@
 //        Mockito.when(companyMapper.convertToCompanyResponseDto(company)).thenReturn(responseDto);
 //
 //        Authentication authentication = new CustomAuthentication(userDetails);
-//        Object result = loginController.login(authentication);
+//        Object result = loginController.auth(authentication);
 //        Assertions.assertEquals(responseDto, result);
 //    }
 //    @Test
@@ -77,7 +77,7 @@
 //        Mockito.when(userMapper.toUserResponse(user)).thenReturn(responseDto);
 //
 //        Authentication authentication = new CustomAuthentication(userDetails);
-//        Object result = loginController.login(authentication);
+//        Object result = loginController.auth(authentication);
 //        Assertions.assertEquals(responseDto, result);
 //    }
 //
@@ -86,7 +86,7 @@
 //    void testLoginWithUnauthenticatedUser() {
 //        LoginController loginController = new LoginController(null, null);
 //
-//        Object result = loginController.login(null);
+//        Object result = loginController.auth(null);
 //
 //        Assertions.assertNull(result);
 //    }

@@ -20,9 +20,10 @@ public class ExceptionHandler {
     public ResponseEntity<Object> handleValidException(MethodArgumentNotValidException e) {
         return new ResponseEntity<>(parseFieldErrors(e.getFieldErrors()), HttpStatus.BAD_REQUEST);
     }
+
     private List<String> parseFieldErrors(List<FieldError> fieldErrors) {
         ArrayList<String> fieldError = new ArrayList<>();
-        for (FieldError error : fieldErrors ) {
+        for (FieldError error : fieldErrors) {
             fieldError.add(error.getDefaultMessage());
         }
         return fieldError;

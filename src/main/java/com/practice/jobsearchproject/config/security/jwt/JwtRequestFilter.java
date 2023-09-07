@@ -1,4 +1,4 @@
-package com.practice.jobsearchproject.config;
+package com.practice.jobsearchproject.config.security.jwt;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.practice.jobsearchproject.service.impl.CustomUserDetailsService;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetailsService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,5 +61,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-
 }

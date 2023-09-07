@@ -3,7 +3,7 @@ package com.practice.jobsearchproject.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.PasswordException;
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
@@ -94,7 +94,7 @@ public class CompanyControllerTest {
         companyDto.setEmail("created@gmail.com");
         companyDto.setPassword("newPassword");
         companyDto.setConfirmPassword("newPassword");
-        companyDto.setTelephone("+994551234567");
+        companyDto.setTelephone("994 55 123 45 67");
         companyDto.setCvEmail("created_cv_email@gmail.com");
         companyDto.setInformation("Created company information");
 
@@ -106,6 +106,7 @@ public class CompanyControllerTest {
                 .file(new MockMultipartFile("companyRequestDto", "", "application/json", mapper.writeValueAsString(companyDto).getBytes()))
                 .file(new MockMultipartFile("file", "", "application/json", "file.jpg".getBytes()))
                 .with(csrf())
+//                .accept(MediaType.MULTIPART_FORM_DATA_VALUE);
                 .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult mvcResultPost = mockMvc.perform(requestBuilderPost).andReturn();
         assertEquals(HttpStatus.CREATED.value(), mvcResultPost.getResponse().getStatus());
@@ -159,7 +160,7 @@ public class CompanyControllerTest {
         companyDto.setEmail("updated_email@gmail.com");
         companyDto.setPassword("newPassword");
         companyDto.setConfirmPassword("newPassword");
-        companyDto.setTelephone("+994551234567");
+        companyDto.setTelephone("994 55 123 45 67");
         companyDto.setCvEmail("updated_cv_email@gmail.com");
         companyDto.setInformation("Updated company information");
         companyDto.setPhotoUrl("updated_photo_url");
