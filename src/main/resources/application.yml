@@ -1,6 +1,6 @@
 spring:
-#  profiles:
-#    active: dev
+  profiles:
+    active: dev
   datasource:
     url: jdbc:postgresql://localhost:5432/job-search
     username: postgres
@@ -23,14 +23,14 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   mail:
-    host: smtp.gmail.com
-    port: 587
+#    host: smtp.gmail.com
+#    port: 587
 #    username: ${env.EMAIL_USERNAME}
 #    password: ${env.EMAIL_PASSWORD}
 #    username: cavidan.niyazali@gmail.com
 #    password: piiiyuykjanptdqk
-    username: "vabiss.test1@gmail.com"
-    password: "uqjgeozovzhrleqx"
+#    username: "vabiss.test1@gmail.com"
+#    password: "uqjgeozovzhrleqx"
     properties:
       mail:
         smtp:

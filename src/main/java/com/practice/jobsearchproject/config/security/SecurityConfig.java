@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtRequestFilter jwtRequestFilter;
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",

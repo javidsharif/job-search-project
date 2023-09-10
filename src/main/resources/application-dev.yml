@@ -12,14 +12,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
-#  flyway:
-#    locations: "classpath:db.migration"
+  flyway:
+    locations: "classpath:db.migration"
 
-#    schemas: public
-#    baseline-on-migrate: true
-#  mvc:
-#    path match:
-#      matching-strategy: ant_path_matcher
+    schemas: public
+    baseline-on-migrate: true
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
 
   ###### Email Properties ######
   mail:

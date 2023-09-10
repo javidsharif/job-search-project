@@ -3,7 +3,6 @@ package com.practice.jobsearchproject.service;
 import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
-import com.practice.jobsearchproject.model.dto.response.AuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
