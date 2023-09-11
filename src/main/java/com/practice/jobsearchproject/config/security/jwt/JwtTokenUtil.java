@@ -1,6 +1,5 @@
 package com.practice.jobsearchproject.config.security.jwt;
 
-import java.io.Serializable;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,9 +17,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
-public class JwtTokenUtil implements Serializable {
-
-    private static final long serialVersionUID = -2550185165626007488L;
+public class JwtTokenUtil {
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     @Value("${security.jwt.secret}")
