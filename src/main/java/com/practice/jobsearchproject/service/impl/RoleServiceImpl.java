@@ -12,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
+
     @Override
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
@@ -21,5 +22,4 @@ public class RoleServiceImpl implements RoleService {
     public Role findByName(String name) {
         return roleRepository.findByName(name);
     }
-
 }

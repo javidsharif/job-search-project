@@ -1,123 +1,73 @@
 package com.practice.jobsearchproject.controller;
 
-import com.practice.jobsearchproject.model.CustomUserDetails;
-import com.practice.jobsearchproject.model.dto.RoleDto;
+import com.practice.jobsearchproject.model.dto.request.AuthenticationRequest;
+import com.practice.jobsearchproject.model.dto.response.CompanyAuthenticationResponse;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
-import com.practice.jobsearchproject.model.dto.response.UserResponse;
-import com.practice.jobsearchproject.model.entity.Company;
-import com.practice.jobsearchproject.model.entity.User;
-import com.practice.jobsearchproject.model.entity.UserAuthentication;
-import com.practice.jobsearchproject.model.mapper.CompanyMapper;
-import com.practice.jobsearchproject.model.mapper.UserMapper;
+import com.practice.jobsearchproject.service.UserAuthenticationService;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 
-public class LoginControllerTest {
-    @Mock
-    private CompanyMapper companyMapper;
-    @Mock
-    private UserMapper userMapper;
-    @Mock
-    private CustomUserDetails customUserDetails;
-    @InjectMocks
-    private LoginController loginController;
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-    @Test
-    @DisplayName("Test login() with an authenticated user who is a company")
-    void testLoginWithAuthenticatedCompany() {
-        Company company = new Company();
-        company.setId(1L);
-        company.setCvEmail("default");
-        CompanyResponseDto responseDto = buildDefaultResponseDto();
-        UserAuthentication userAuthentication = new UserAuthentication();
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-        userAuthentication.setEmail("default@default.com");
-        userAuthentication.setPassword(encoder().encode("default"));
-        userAuthentication.setCompany(company);
-        company.setUserAuthentication(userAuthentication);
-        CustomUserDetails userDetails = new CustomUserDetails(userAuthentication);
-        userDetails.getUserAuthentication().setCompany(company);
-        Mockito.when(customUserDetails.getUserAuthentication()).thenReturn(userAuthentication);
-        Mockito.when(companyMapper.convertToCompanyResponseDto(company)).thenReturn(responseDto);
 
-        Authentication authentication = new CustomAuthentication(userDetails);
-        Object result = loginController.login(authentication);
-        Assertions.assertEquals(responseDto, result);
-    }
-    @Test
-    @DisplayName("Test login() with an authenticated user who is not a company")
-    void testLoginWithAuthenticatedUser() {
-        User user = new User();
-        user.setId(1L);
-        UserResponse responseDto = buildResponseUserDto();
-        UserAuthentication userAuthentication = new UserAuthentication();
+@WebMvcTest(controllers = LoginController.class)
+@RequiredArgsConstructor
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ContextConfiguration(classes = {LoginController.class})
+class LoginControllerTest {
 
-        userAuthentication.setEmail("default@default.com");
-        userAuthentication.setPassword(encoder().encode("default"));
-        userAuthentication.setUser(user);
-        user.setUserAuthentication(userAuthentication);
-        CustomUserDetails userDetails = new CustomUserDetails(userAuthentication);
-        userDetails.getUserAuthentication().setUser(user);
-        Mockito.when(customUserDetails.getUserAuthentication()).thenReturn(userAuthentication);
-        Mockito.when(userMapper.toUserResponse(user)).thenReturn(responseDto);
+    @Autowired
+    private MockMvc mockMvc;
 
-        Authentication authentication = new CustomAuthentication(userDetails);
-        Object result = loginController.login(authentication);
-        Assertions.assertEquals(responseDto, result);
-    }
+    @MockBean
+    private UserAuthenticationService userAuthenticationService;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    @DisplayName("Test login() with an unauthenticated user")
-    void testLoginWithUnauthenticatedUser() {
-        LoginController loginController = new LoginController(null, null);
+    @WithMockUser(username = "testuser", password = "testPassword", roles = {"USER", "ADMIN"})
+    void testAuth() throws Exception {
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setEmail("testuser");
+        authenticationRequest.setPassword("testpassword");
 
-        Object result = loginController.login(null);
+        CompanyAuthenticationResponse authenticationResponse = new CompanyAuthenticationResponse();
+        authenticationResponse.setToken("testtoken");
+        authenticationResponse.setCompany(new CompanyResponseDto());
 
-        Assertions.assertNull(result);
-    }
-    private UserResponse buildResponseUserDto() {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setName("default");
-        userResponse.setCity("default");
-        userResponse.setRole(buildRoleDto());
-        userResponse.setGender("default");
-        userResponse.setPhone("+99411111111");
-        userResponse.setDateOfBirth(new Date());
-        userResponse.setSurname("default");
-        return userResponse;
-    }
+        when(userAuthenticationService.login(any(AuthenticationRequest.class)))
+                .thenReturn(authenticationResponse);
 
-    private RoleDto buildRoleDto() {
-        RoleDto roleDto = new RoleDto();
-        roleDto.setId(1L);
-        roleDto.setName("USER");
-        return roleDto;
-    }
-    private CompanyResponseDto buildDefaultResponseDto() {
-        return CompanyResponseDto.builder().name("Company 2")
-                .telephone("+994 55 555 55 55").cvEmail("canpo_niyazali@mail.ru")
-                .information("canpo_niyazali").createdAt(LocalDateTime.of(2023, 7, 27, 12, 0))
-                .photoUrl("photo").city("London").fieldOfActivity("2").numberOfEmployees(20)
-                .address("London").siteOfCompany("company@mail.ru").instagramProfileLink("instagram")
-                .linkedinProfileLink("linkedin").twitterProfileLink("twitter")
-                .facebookProfileLink("facebook").build();
-    }
-    private PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/auth/login")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest));
+
+        MvcResult mvcResult = mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String jsonResponse = mvcResult.getResponse().getContentAsString();
+        CompanyAuthenticationResponse response = objectMapper.readValue(jsonResponse, CompanyAuthenticationResponse.class);
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals("testtoken", response.getToken());
     }
 }

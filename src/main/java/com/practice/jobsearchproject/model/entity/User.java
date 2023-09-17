@@ -5,13 +5,11 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -34,9 +32,9 @@ public class User {
     private String gender;
     private String city;
     private String photoUrl;
-
     private LocalDateTime createdAt;
 
+    //    @ManyToOne(fetch = FetchType.EAGER)
     @ManyToOne
     @JoinTable(
             name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),

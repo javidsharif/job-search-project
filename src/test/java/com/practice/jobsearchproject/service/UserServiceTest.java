@@ -1,10 +1,10 @@
 package com.practice.jobsearchproject.service;
 
-import com.practice.jobsearchproject.config.SecurityConfig;
+import com.practice.jobsearchproject.config.security.SecurityConfig;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
 import com.practice.jobsearchproject.model.entity.Role;
 import com.practice.jobsearchproject.model.entity.User;
@@ -13,10 +13,7 @@ import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
 import com.practice.jobsearchproject.repository.UserRepository;
 import com.practice.jobsearchproject.service.impl.FileServiceImpl;
 import com.practice.jobsearchproject.service.impl.UserServiceImpl;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
@@ -33,7 +30,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -85,6 +84,21 @@ public class UserServiceTest {
 
     @Test
     @Order(1)
+    public void testGetAllUsers() {
+        List<User> mockUserList = new ArrayList<>();
+        mockUserList.add(new User());
+        mockUserList.add(new User());
+
+        when(userRepository.findAll()).thenReturn(mockUserList);
+
+        List<User> result = userService.getAllUsers();
+
+        Assertions.assertEquals(mockUserList.size(), result.size());
+        Assertions.assertEquals(mockUserList, result);
+    }
+
+    @Test
+    @Order(2)
     public void createUser_whenValidUserRequestDto() throws IOException {
         var userRequestDto = buildRequestDto();
         when(userAuthRepository.findByEmail(userRequestDto.getEmail())).thenReturn(Optional.empty());
@@ -105,7 +119,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     public void createUser_whenThrowEmailAlreadyExists() {
         when(userAuthRepository.findByEmail(DEFAULT_EMAIL)).thenReturn(Optional.of(DEFAULT_USER_AUTHENTICATION));
         UserRequestDto userRequestDto = DEFAULT_USER_DTO;
@@ -114,7 +128,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void createUser_whenThrowPasswordException() {
         UserRequestDto userRequestDto = buildRequestDto();
         userRequestDto.setConfirmPassword("newDefault");
@@ -128,7 +142,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void updateUser_whenValidUserRequestDto() throws IOException {
         UserRequestDto userRequestDto = buildRequestDto();
         String newPassword = "newPassword";
@@ -150,7 +164,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     void testUpdateUser_whenPasswordConfirmationMismatch() {
         UserRequestDto userDto = buildRequestDto();
         userDto.setPassword("defaultPassword");
@@ -167,7 +181,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void testUpdateUser_whenNotFoundException() {
         UserRequestDto userDto = buildRequestDto();
 
@@ -181,7 +195,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @Order(6)
+    @Order(8)
     void testUpdateUser_whenEmailAlreadyExists() {
         String existingEmail = "default@default.com";
         UserRequestDto userRequestDto = buildRequestDto();

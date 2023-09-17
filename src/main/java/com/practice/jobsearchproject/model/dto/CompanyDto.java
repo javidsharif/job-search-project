@@ -29,7 +29,7 @@ public class CompanyDto {
     @NotBlank(message = "email is mandatory")
     @Email(regexp = "^(.+)@(.+)$", message = "Email is wrong")
     private String email;
-//    @Pattern(regexp = "\\d{3}\\s\\d{2}\\s\\d{3}\\s\\d{2}\\s\\d{2}", message = "Telephone is wrong")
+    @Pattern(regexp = "\\d{3}\\s\\d{2}\\s\\d{3}\\s\\d{2}\\s\\d{2}", message = "Telephone is wrong")
     private String telephone;
     @NotNull
     @NotBlank(message = "cv email is mandatory")

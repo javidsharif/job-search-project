@@ -1,21 +1,28 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/job-search
-    username: postgres
-#    password: 12345
-    password: bestuser
-    driver-class-name: org.postgresql.Driver
+  profiles:
+    active: prod
   jpa:
     hibernate:
       ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   flyway:
     locations: "classpath:db.migration"
-
     schemas: public
     baseline-on-migrate: true
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  mail:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
   cloud:
     gcp:
       projectId: "job-search-project-395115"

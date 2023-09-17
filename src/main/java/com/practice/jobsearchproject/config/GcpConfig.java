@@ -30,8 +30,8 @@ public class GcpConfig {
             String decodedJSON = new String(decodedBytes);
             GoogleCredentials credentials = GoogleCredentials.fromStream(new ByteArrayInputStream(decodedJSON.getBytes()));
             return credentials;
-        }catch (RequestFailedException exception) {
-                throw new RequestFailedException("Request failed Exception");
+        } catch (RequestFailedException exception) {
+            throw new RequestFailedException("Request failed Exception");
         }
     }
 }

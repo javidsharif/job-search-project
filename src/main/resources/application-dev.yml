@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/job-search
+    username: postgres
+    password: 12345
+    #    password: bestuser
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    locations: "classpath:db.migration"
+
+    schemas: public
+    baseline-on-migrate: true
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+
+  ###### Email Properties ######
+  mail:
+    host: smtp.gmail.com
+    port: 587
+#    username: ${env.EMAIL_USERNAME}
+#    password: ${env.EMAIL_PASSWORD}
+    username: "vabiss.test1@gmail.com"
+    password: "uqjgeozovzhrleqx"
+security:
+  jwt:
+    secret: 68566D597133743677397A24432646294A404D635166546A576E5A7234753778
+

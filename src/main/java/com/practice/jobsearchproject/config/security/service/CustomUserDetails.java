@@ -1,4 +1,4 @@
-package com.practice.jobsearchproject.model;
+package com.practice.jobsearchproject.config.security.service;
 
 
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private final UserAuthentication userAuthentication;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -60,4 +59,5 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

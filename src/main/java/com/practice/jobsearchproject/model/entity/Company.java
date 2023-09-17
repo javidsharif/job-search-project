@@ -40,8 +40,6 @@ public class Company {
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
     @Column(name = "foundation_date")
-//    @Temporal(TemporalType.DATE)
-//    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate foundationDate;
     @Column(name = "field_of_activity")
     private String fieldOfActivity;

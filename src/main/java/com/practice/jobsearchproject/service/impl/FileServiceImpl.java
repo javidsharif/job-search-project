@@ -9,8 +9,8 @@ import com.practice.jobsearchproject.exception.FileUploadException;
 import com.practice.jobsearchproject.model.entity.Company;
 import com.practice.jobsearchproject.model.entity.User;
 import com.practice.jobsearchproject.service.FileService;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
@@ -24,23 +24,20 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
     @Setter
     @Value("${gcp.bucket.name}")
     private String bucketName;
-
-    @Autowired
-    private Storage storage;
-
-    private static final String[] ALLOWED_EXTENSIONS = new String[] {"jpg", "jpeg", "png"};
-
+    private final Storage storage;
+    private static final String[] ALLOWED_EXTENSIONS = new String[]{"jpg", "jpeg", "png"};
 
     @Override
     public List<String> listOfFiles() {
         List<String> list = new ArrayList<>();
         Page<Blob> blobs = storage.list(bucketName);
-        for (Blob blob: blobs.iterateAll()) {
-           list.add(blob.getName());
+        for (Blob blob : blobs.iterateAll()) {
+            list.add(blob.getName());
         }
         return list;
     }
@@ -58,6 +55,7 @@ public class FileServiceImpl implements FileService {
                 blob.getContent());
         return resource;
     }
+
     @Override
     public <T> void uploadFile(MultipartFile file, T data) throws IOException {
         String fileName = file.getOriginalFilename();
@@ -68,14 +66,15 @@ public class FileServiceImpl implements FileService {
         BlobId blobId = BlobId.of(bucketName, Objects.requireNonNull(generateUniqueFileName(fileName)));
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).
                 setContentType(file.getContentType()).build();
-        Blob blob = storage.create(blobInfo,file.getBytes());
+        Blob blob = storage.create(blobInfo, file.getBytes());
         String photoUrl = createImageUrl(blob.getBlobId().getName());
-        if(data instanceof User) {
+        if (data instanceof User) {
             ((User) data).setPhotoUrl(photoUrl);
-        }else if (data instanceof Company) {
+        } else if (data instanceof Company) {
             ((Company) data).setPhotoUrl(photoUrl);
         }
     }
+
     public String createImageUrl(String objectName) {
         return "https://storage.googleapis.com/" + bucketName + "/" + objectName;
     }

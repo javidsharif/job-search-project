@@ -1,12 +1,15 @@
 package com.practice.jobsearchproject.service.impl;
 
+import com.practice.jobsearchproject.config.security.jwt.JwtTokenUtil;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetailsService;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.request.UserRequestDto;
 import com.practice.jobsearchproject.model.entity.User;
 import com.practice.jobsearchproject.model.entity.UserAuthentication;
+import com.practice.jobsearchproject.model.mapper.UserMapper;
 import com.practice.jobsearchproject.repository.UserAuthenticationRepository;
 import com.practice.jobsearchproject.repository.UserRepository;
 import com.practice.jobsearchproject.service.FileService;
@@ -14,6 +17,7 @@ import com.practice.jobsearchproject.service.RoleService;
 import com.practice.jobsearchproject.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,14 +30,20 @@ import java.util.Optional;
 @Service
 @Data
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+    private final UserMapper userMapper;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final CustomUserDetailsService customUserDetailsService;
     private final FileService fileService;
     private final UserAuthenticationRepository userAuthRepository;
+
     @Override
     public List<User> getAllUsers() {
+        log.info("Fetching all users");
         return userRepository.findAll();
     }
 
@@ -50,11 +60,12 @@ public class UserServiceImpl implements UserService {
         user.setUserAuthentication(userAuth);
         userAuth.setUser(user);
         user.setRole(roleService.findByName("USER"));
-        if(file != null && !file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             fileService.uploadFile(file, user);
         }
         save(user);
         userAuthRepository.save(userAuth);
+        log.info("Creating new user {}", user.getName());
     }
 
     @Override
@@ -78,6 +89,7 @@ public class UserServiceImpl implements UserService {
         }
         fillUser(userDto, authenticatedUser);
         save(authenticatedUser);
+        log.info("Updating the user {}", authenticatedUser.getName());
     }
 
     private User getUser(UserRequestDto userDto) {
@@ -103,9 +115,6 @@ public class UserServiceImpl implements UserService {
         authenticatedUser.setDateOfBirth(userDto.getDateOfBirth());
         if (!authenticatedUser.getUserAuthentication().getEmail().equals(userDto.getEmail())) {
             authenticatedUser.getUserAuthentication().setEmail(userDto.getEmail());
-        }
-        if (!authenticatedUser.getUserAuthentication().getPassword().equals(userDto.getPassword())) {
-            authenticatedUser.getUserAuthentication().setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
         authenticatedUser.setPhone(userDto.getPhone());
         authenticatedUser.setGender(userDto.getGender());

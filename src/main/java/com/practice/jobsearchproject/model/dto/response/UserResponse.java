@@ -13,7 +13,6 @@ public class UserResponse {
     private String gender;
     private String city;
     private Date dateOfBirth;
-
     private RoleDto role;
     private String photoUrl;
 }

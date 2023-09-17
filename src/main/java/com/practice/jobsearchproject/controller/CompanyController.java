@@ -1,6 +1,6 @@
 package com.practice.jobsearchproject.controller;
 
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;

@@ -1,9 +1,11 @@
 package com.practice.jobsearchproject.service.impl;
 
+import com.practice.jobsearchproject.config.security.jwt.JwtTokenUtil;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetailsService;
 import com.practice.jobsearchproject.exception.AlreadyExistsException;
 import com.practice.jobsearchproject.exception.NotFoundException;
 import com.practice.jobsearchproject.exception.PasswordException;
-import com.practice.jobsearchproject.model.CustomUserDetails;
+import com.practice.jobsearchproject.config.security.service.CustomUserDetails;
 import com.practice.jobsearchproject.model.dto.CompanyDto;
 import com.practice.jobsearchproject.model.dto.request.CompanyRequestDto;
 import com.practice.jobsearchproject.model.dto.response.CompanyResponseDto;
@@ -17,6 +19,7 @@ import com.practice.jobsearchproject.service.FileService;
 import com.practice.jobsearchproject.service.RoleService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,18 +33,21 @@ import java.util.stream.Collectors;
 @Service
 @Data
 @RequiredArgsConstructor
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final UserAuthenticationRepository userAuthRepository;
-
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtTokenUtil jwtTokenUtil;
     private final FileService fileService;
 
     @Override
     public List<CompanyResponseDto> getAllCompanies() {
         List<Company> companies = companyRepository.findAll();
+        log.info("Fetching all companies");
         return companies.stream()
                 .map(companyMapper::convertToCompanyResponseDto)
                 .collect(Collectors.toList());
@@ -60,12 +66,14 @@ public class CompanyServiceImpl implements CompanyService {
         company.setUserAuthentication(userAuth);
         userAuth.setCompany(company);
         company.setRole(roleService.findByName("USER"));
-        if(file != null && !file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             fileService.uploadFile(file, company);
         }
         companyRepository.save(company);
         userAuthRepository.save(userAuth);
+        log.info("Creating new company {}", company.getName());
     }
+
     @Override
     public void updateCompany(CompanyDto companyDto, MultipartFile file, CustomUserDetails companyDetails) throws IOException {
         String newPassword = companyDto.getPassword();
@@ -88,6 +96,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         fillCompany(companyDto, authenticatedCompany);
         companyRepository.save(authenticatedCompany);
+        log.info("Updating the company {}", authenticatedCompany.getName());
     }
 
     private Company getCompany(CompanyRequestDto companyRequestDto) {
@@ -113,9 +122,6 @@ public class CompanyServiceImpl implements CompanyService {
         authenticatedCompany.setName(companyDto.getName());
         if (!authenticatedCompany.getUserAuthentication().getEmail().equals(companyDto.getEmail())) {
             authenticatedCompany.getUserAuthentication().setEmail(companyDto.getEmail());
-        }
-        if (!authenticatedCompany.getUserAuthentication().getPassword().equals(companyDto.getPassword())) {
-            authenticatedCompany.getUserAuthentication().setPassword(passwordEncoder.encode(companyDto.getPassword()));
         }
         authenticatedCompany.setTelephone(companyDto.getTelephone());
         authenticatedCompany.setCvEmail(companyDto.getCvEmail());
