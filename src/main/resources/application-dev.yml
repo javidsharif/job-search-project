@@ -5,13 +5,6 @@ spring:
     password: 12345
     #    password: bestuser
     driver-class-name: org.postgresql.Driver
-#  jpa:
-#    hibernate:
-#      ddl-auto: none
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   flyway:
     locations: "classpath:db.migration"
 
@@ -29,21 +22,6 @@ spring:
 #    password: ${env.EMAIL_PASSWORD}
     username: "vabiss.test1@gmail.com"
     password: "uqjgeozovzhrleqx"
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-#  cloud:
-#    gcp:
-#      projectId: "job-search-project-395115"
-#  servlet:
-#    multipart:
-#      max-file-size: 10MB
-#gcp:
-#  bucket:
-#    name: "job-search-bucket"
 security:
   jwt:
     secret: 68566D597133743677397A24432646294A404D635166546A576E5A7234753778

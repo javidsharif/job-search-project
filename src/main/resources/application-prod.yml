@@ -3,35 +3,15 @@ spring:
     url: jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}
     username: ${PROD_DB_USERNAME}
     password: ${PROD_DB_PASSWORD}
-
   sql:
     init:
       mode: always
-#  jpa:
-#    hibernate:
-#      ddl-auto: none
-
   ###### Email Properties ######
   mail:
     host: ${EMAIL_HOST}
     port: ${EMAIL_PORT}
     username: ${EMAIL_USERNAME}
     password: ${EMAIL_PASSWORD}
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-#  cloud:
-#    gcp:
-#      projectId: "job-search-project-395115"
-#  servlet:
-#    multipart:
-#      max-file-size: 10MB
-#gcp:
-#  bucket:
-#    name: "job-search-bucket"
 security:
   jwt:
     secret: ${JWT_SECRET}
