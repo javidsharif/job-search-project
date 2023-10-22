@@ -200,8 +200,8 @@
                 <configuration>
                     <url>jdbc:postgresql://localhost:5432/job-search</url>
                     <user>postgres</user>
-<!--                    <password>bestuser</password>-->
-                    <password>12345</password>
+                    <password>bestuser</password>
+<!--                    <password>12345</password>-->
                     <schemas>
                         <schema>public</schema>
                     </schemas>
