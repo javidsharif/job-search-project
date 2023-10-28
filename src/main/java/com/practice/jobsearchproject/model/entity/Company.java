@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -61,4 +62,7 @@ public class Company {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_authentication_id", referencedColumnName = "id")
     private UserAuthentication userAuthentication;
+
+    @OneToMany(mappedBy = "company")
+    private List<Vacancy> vacancies;
 }
