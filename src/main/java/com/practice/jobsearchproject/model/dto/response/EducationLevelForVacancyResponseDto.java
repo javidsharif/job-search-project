@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EducationLevelResponseDto {
+public class EducationLevelForVacancyResponseDto {
     private Integer id;
     private String level;
 }

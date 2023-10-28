@@ -32,7 +32,7 @@ public class DetailedVacancyResponseDto {
     private String specialRequirements;
     private String forApply;
     private Integer minimalWorkExperience;
-    private EducationLevelResponseDto educationLevelResponseDto;
+    private EducationLevelForVacancyResponseDto educationLevelForVacancyResponseDto;
     private boolean noteContactAtVacancy;
     private boolean postVacancy;
 }

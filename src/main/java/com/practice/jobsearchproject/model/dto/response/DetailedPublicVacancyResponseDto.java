@@ -24,7 +24,7 @@ public class DetailedPublicVacancyResponseDto {
     private String specialRequirements;
     private String forApply;
     private Integer minimalWorkExperience;
-    private EducationLevelResponseDto educationLevelResponseDto;
+    private EducationLevelForVacancyResponseDto educationLevelForVacancyResponseDto;
     private long viewNumber;
     private LocalDate createdAt;
 }

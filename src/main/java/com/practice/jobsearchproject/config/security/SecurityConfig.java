@@ -44,7 +44,6 @@ public class SecurityConfig {
                 .antMatchers("/api/v1/roles/**").permitAll()
                 .antMatchers("/api/v1/auth/**").authenticated()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/v1/candidate/resume").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
                 .antMatchers("/api/v1/users/**").authenticated()

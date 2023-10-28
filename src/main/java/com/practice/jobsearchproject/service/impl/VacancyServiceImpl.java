@@ -36,7 +36,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final CurrencyRepository currencyRepository;
     private final JobTypeRepository jobTypeRepository;
     private final SpecialKnowledgeRepository specialKnowledgeRepository;
-    private final EducationLevelRepository educationLevelRepository;
+    private final EducationLevelForVacancyRepository educationLevelForVacancyRepository;
     private final UserAuthenticationRepository userAuthenticationRepository;
     private final StatusRepository statusRepository;
     private final CityMapper cityMapper;
@@ -45,7 +45,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final CommunicationToolMapper communicationToolMapper;
     private final CategoryMapper categoryMapper;
     private final CurrencyMapper currencyMapper;
-    private final EducationLevelMapper educationLevelMapper;
+    private final EducationLevelForVacancyMapper educationLevelForVacancyMapper;
 
     @Override
     public List<PublicVacancyResponseDto> getAllVacancies() {
@@ -76,7 +76,7 @@ public class VacancyServiceImpl implements VacancyService {
         dto.setJobTypeResponseDtos(jobTypeMapper.convertToJobTypeResponseDtos(vacancy.getJobTypes()));
         dto.setSpecialKnowledgeResponseDtos(specialKnowledgeMapper.convertToSpecialKnowledgeResponseDtos(vacancy.getSpecialKnowledge()));
         dto.setCategoryResponseDto(categoryMapper.convertToCategoryResponseDto(vacancy.getCategory()));
-        dto.setEducationLevelResponseDto(educationLevelMapper.convertToEducationLevelResponseDto(vacancy.getEducationLevel()));
+        dto.setEducationLevelForVacancyResponseDto(educationLevelForVacancyMapper.convertToEducationLevelForVacancyResponseDto(vacancy.getEducationLevelForVacancy()));
         log.info("Getting the vacancy {}", id);
         return dto;
     }
@@ -97,7 +97,7 @@ public class VacancyServiceImpl implements VacancyService {
         dto.setCategoryResponseDto(categoryMapper.convertToCategoryResponseDto(vacancy.getCategory()));
         dto.setCommunicationToolResponseDto(communicationToolMapper.convertToCommunicationToolResponseDto(vacancy.getCommunicationTool()));
         dto.setCurrencyResponseDto(currencyMapper.convertToCurrencyResponseDto(vacancy.getCurrency()));
-        dto.setEducationLevelResponseDto(educationLevelMapper.convertToEducationLevelResponseDto(vacancy.getEducationLevel()));
+        dto.setEducationLevelForVacancyResponseDto(educationLevelForVacancyMapper.convertToEducationLevelForVacancyResponseDto(vacancy.getEducationLevelForVacancy()));
         log.info("Getting the vacancy {}", id);
         return dto;
     }
@@ -176,7 +176,7 @@ public class VacancyServiceImpl implements VacancyService {
                 .specialRequirements(vacancyRequestDto.getSpecialRequirements())
                 .forApply(vacancyRequestDto.getForApply())
                 .minimalWorkExperience(vacancyRequestDto.getMinimalWorkExperience())
-                .educationLevel(educationLevelRepository.findEducationLevelById(vacancyRequestDto.getEducationLevelId()))
+                .educationLevelForVacancy(educationLevelForVacancyRepository.findEducationLevelForVacancyById(vacancyRequestDto.getEducationLevelId()))
                 .noteContactAtVacancy(vacancyRequestDto.isNoteContactAtVacancy())
                 .postVacancy(vacancyRequestDto.isPostVacancy())
                 .createdAt(LocalDate.now())
@@ -205,7 +205,7 @@ public class VacancyServiceImpl implements VacancyService {
         vacancy.setSpecialRequirements(vacancyRequestDto.getSpecialRequirements());
         vacancy.setForApply(vacancyRequestDto.getForApply());
         vacancy.setMinimalWorkExperience(vacancyRequestDto.getMinimalWorkExperience());
-        vacancy.setEducationLevel(educationLevelRepository.getReferenceById(vacancyRequestDto.getEducationLevelId()));
+        vacancy.setEducationLevelForVacancy(educationLevelForVacancyRepository.getReferenceById(vacancyRequestDto.getEducationLevelId()));
         vacancy.setNoteContactAtVacancy(vacancyRequestDto.isNoteContactAtVacancy());
         vacancy.setPostVacancy(vacancyRequestDto.isPostVacancy());
         vacancy.setStatus(statusRepository.getReferenceById(1));

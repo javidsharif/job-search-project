@@ -81,7 +81,7 @@ public class Vacancy {
     @ManyToOne
     @JoinColumn(name = "education_level_id", referencedColumnName = "id")
     @JsonIgnore
-    private EducationLevel educationLevel;
+    private EducationLevelForVacancy educationLevelForVacancy;
     @Column(name = "note_contact_at_vacancy")
     private boolean noteContactAtVacancy;
     @Column(name = "post_vacancy")
