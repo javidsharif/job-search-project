@@ -1,0 +1,20 @@
+CREATE TABLE Resume (
+    id SERIAL PRIMARY KEY,
+    name_and_surname VARCHAR(30),
+    status VARCHAR(30),
+    count BIGINT,
+    phone VARCHAR(255),
+    email VARCHAR(255),
+    preferred_means_of_communication VARCHAR(255),
+    position VARCHAR(255),
+    about_us TEXT,
+    facebook_link VARCHAR(255),
+    linkedin_link VARCHAR(255),
+    github_link VARCHAR(255),
+    behance_link VARCHAR(255),
+    is_post_cv BOOLEAN,
+    checked_comment VARCHAR(500),
+    update_date TIMESTAMP,
+    registration_date TIMESTAMP,
+    user_id BIGINT REFERENCES users(id)
+);

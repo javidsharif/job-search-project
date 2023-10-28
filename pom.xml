@@ -209,6 +209,8 @@
                     <user>postgres</user>
                     <!--                    <password>bestuser</password>-->
                     <password>12345</password>
+                    <password>bestuser</password>
+<!--                    <password>12345</password>-->
                     <schemas>
                         <schema>public</schema>
                     </schemas>

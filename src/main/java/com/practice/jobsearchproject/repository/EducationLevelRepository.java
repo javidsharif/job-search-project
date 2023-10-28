@@ -9,3 +9,7 @@ public interface EducationLevelRepository extends JpaRepository<EducationLevel, 
     EducationLevel findEducationLevelById(Integer id);
 }
 
+
+public interface EducationLevelRepository extends JpaRepository<EducationLevel, Long> {
+
+}
