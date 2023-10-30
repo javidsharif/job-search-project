@@ -25,11 +25,11 @@ public class JobSearchProjectApplication {
        EducationLevelRepository elr  = applicationContext.getBean(EducationLevelRepository.class);
        JobGraphicRepository jgr  = applicationContext.getBean(JobGraphicRepository.class);
        UniversityRepository ur  = applicationContext.getBean(UniversityRepository.class);
-       saveOccupationToDatabase(ocp);
-        saveToDatabase(ls);
-        saveEducationLevelToDB(elr);
-        saveJobGraphicToDB(jgr);
-        saveUniversitiesToDB(ur);
+//       saveOccupationToDatabase(ocp);
+//        saveToDatabase(ls);
+//        saveEducationLevelToDB(elr);
+//        saveJobGraphicToDB(jgr);
+//        saveUniversitiesToDB(ur);
     }
     public static void saveToDatabase(ListCompanyRepository listCompanyRepository) throws IOException {
         File fileReader = new File("companies.json");
