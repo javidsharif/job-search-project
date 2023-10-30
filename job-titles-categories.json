@@ -1,0 +1,259 @@
+[
+  {
+    "id": 1,
+    "name": "Administrative and Clerical Positions",
+    "parentId": 0,
+    "children": [
+      {"id": 16, "name": "Administrative Assistant", "parentId": 1},
+      {"id": 17, "name": "Receptionist", "parentId": 1},
+      {"id": 18, "name": "Office Manager", "parentId": 1},
+      {"id": 19, "name": "Data Entry Clerk", "parentId": 1},
+      {"id": 20, "name": "Executive Assistant", "parentId": 1},
+      {"id": 21, "name": "File Clerk", "parentId": 1},
+      {"id": 22, "name": "Office Administrator", "parentId": 1},
+      {"id": 23, "name": "Secretary", "parentId": 1},
+      {"id": 24, "name": "Mail-room Clerk", "parentId": 1},
+      {"id": 25, "name": "Records Clerk", "parentId": 1},
+      {"id": 26, "name": "Billing Clerk", "parentId": 1}
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Sales and Marketing",
+    "parentId": 0,
+    "children": [
+      {"id": 27, "name": "Sales Representative", "parentId": 2},
+      {"id": 28, "name": "Marketing Manager", "parentId": 2},
+      {"id": 29, "name": "Digital Marketing Specialist", "parentId": 2},
+      {"id": 30, "name": "Social Media Coordinator", "parentId": 2},
+      {"id": 31, "name": "Sales Associate", "parentId": 2},
+      {"id": 32, "name": "Brand Manager", "parentId": 2},
+      {"id": 33, "name": "SEO Specialist", "parentId": 2},
+      {"id": 34, "name": "Content Marketer", "parentId": 2},
+      {"id": 35, "name": "Advertising Sales Agent", "parentId": 2},
+      {"id": 36, "name": "Public Relations Specialist", "parentId": 2},
+      {"id": 37, "name": "Market Research Analyst", "parentId": 2}
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Information Technology (IT)",
+    "parentId": 0,
+    "children": [
+      {"id": 38, "name": "Software Developer", "parentId": 3},
+      {"id": 39, "name": "Network Administrator", "parentId": 3},
+      {"id": 40, "name": "IT Support Specialist", "parentId": 3},
+      {"id": 41, "name": "Database Administrator", "parentId": 3},
+      {"id": 42, "name": "System Analyst", "parentId": 3},
+      {"id": 43, "name": "Frontend Developer", "parentId": 3},
+      {"id": 44, "name": "DevOps Engineer", "parentId": 3},
+      {"id": 45, "name": "Security Analyst", "parentId": 3},
+      {"id": 46, "name": "Cloud Engineer", "parentId": 3},
+      {"id": 47, "name": "AI/Machine Learning Engineer", "parentId": 3},
+      {"id": 48, "name": "Cyber-security Specialist", "parentId": 3}
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Finance and Accounting",
+    "parentId": 0,
+    "children": [
+      {"id": 49, "name": "Accountant", "parentId": 4},
+      {"id": 50, "name": "Financial Analyst", "parentId": 4},
+      {"id": 51, "name": "Bookkeeper", "parentId": 4},
+      {"id": 52, "name": "Auditor", "parentId": 4},
+      {"id": 53, "name": "Payroll Clerk", "parentId": 4},
+      {"id": 54, "name": "Tax Consultant", "parentId": 4},
+      {"id": 55, "name": "Credit Analyst", "parentId": 4},
+      {"id": 56, "name": "Investment Analyst", "parentId": 4},
+      {"id": 57, "name": "Financial Planner", "parentId": 4},
+      {"id": 58, "name": "Cost Accountant", "parentId": 4},
+      {"id": 59, "name": "Revenue Analyst", "parentId": 4}
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Customer Service",
+    "parentId": 0,
+    "children": [
+      {"id": 60, "name": "Customer Service Representative", "parentId": 5},
+      {"id": 61, "name": "Call Center Operator", "parentId": 5},
+      {"id": 62, "name": "Customer Success Manager", "parentId": 5},
+      {"id": 63, "name": "Client Services Coordinator", "parentId": 5},
+      {"id": 64, "name": "Technical Support Specialist", "parentId": 5},
+      {"id": 65, "name": "Help Desk Analyst", "parentId": 5},
+      {"id": 66, "name": "Complaints Handler", "parentId": 5},
+      {"id": 67, "name": "Live Chat Support Agent", "parentId": 5},
+      {"id": 68, "name": "Client Relations Specialist", "parentId": 5},
+      {"id": 69, "name": "Client Onboarding Specialist", "parentId": 5},
+      {"id": 70, "name": "Service Desk Technician", "parentId": 5}
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Human Resources",
+    "parentId": 0,
+    "children": [
+      {"id": 71, "name": "HR Generalist", "parentId": 6},
+      {"id": 72, "name": "Recruiter", "parentId": 6},
+      {"id": 73, "name": "HR Manager", "parentId": 6},
+      {"id": 74, "name": "Benefits Specialist", "parentId": 6},
+      {"id": 75, "name": "Training Coordinator", "parentId": 6},
+      {"id": 76, "name": "Employee Relations Specialist", "parentId": 6},
+      {"id": 77, "name": "Talent Acquisition Specialist", "parentId": 6},
+      {"id": 78, "name": "Compensation Analyst", "parentId": 6},
+      {"id": 79, "name": "HR Business Partner", "parentId": 6},
+      {"id": 80, "name": "Organizational Development Consultant", "parentId": 6},
+      {"id": 81, "name": "Diversity and Inclusion Specialist", "parentId": 6}
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Engineering",
+    "parentId": 0,
+    "children": [
+      {"id": 82, "name": "Mechanical Engineer", "parentId": 7},
+      {"id": 83, "name": "Electrical Engineer", "parentId": 7},
+      {"id": 84, "name": "Civil Engineer", "parentId": 7},
+      {"id": 85, "name": "Software Engineer", "parentId": 7},
+      {"id": 86, "name": "Aerospace Engineer", "parentId": 7},
+      {"id": 87, "name": "Chemical Engineer", "parentId": 7},
+      {"id": 88, "name": "Biomedical Engineer", "parentId": 7},
+      {"id": 89, "name": "Environmental Engineer", "parentId": 7},
+      {"id": 90, "name": "Industrial Engineer", "parentId": 7},
+      {"id": 91, "name": "Petroleum Engineer", "parentId": 7},
+      {"id": 92, "name": "Nuclear Engineer", "parentId": 7}
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Healthcare",
+    "parentId": 0,
+    "children": [
+      {"id": 93, "name": "Registered Nurse", "parentId": 8},
+      {"id": 94, "name": "Medical Doctor", "parentId": 8},
+      {"id": 95, "name": "Medical Technician", "parentId": 8},
+      {"id": 96, "name": "Pharmacist", "parentId": 8},
+      {"id": 97, "name": "Physical Therapist", "parentId": 8},
+      {"id": 98, "name": "Radiologic Technologist", "parentId": 8},
+      {"id": 99, "name": "Dental Hygienist", "parentId": 8},
+      {"id": 100, "name": "Occupational Therapist", "parentId": 8},
+      {"id": 101, "name": "Speech Therapist", "parentId": 8},
+      {"id": 102, "name": "Medical Lab Technician", "parentId": 8},
+      {"id": 103, "name": "Clinical Research Coordinator", "parentId": 8}
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Education and Teaching",
+    "parentId": 0,
+    "children": [
+      {"id": 104, "name": "Teacher", "parentId": 9},
+      {"id": 105, "name": "Professor", "parentId": 9},
+      {"id": 106, "name": "Educational Consultant", "parentId": 9},
+      {"id": 107, "name": "School Counselor", "parentId": 9},
+      {"id": 108, "name": "Special Education Teacher", "parentId": 9},
+      {"id": 109, "name": "Librarian", "parentId": 9},
+      {"id": 110, "name": "Curriculum Developer", "parentId": 9},
+      {"id": 111, "name": "Education Coordinator", "parentId": 9},
+      {"id": 112, "name": "Online Tutor", "parentId": 9},
+      {"id": 113, "name": "Instructional Designer", "parentId": 9},
+      {"id": 114, "name": "Education Program Manager", "parentId": 9}
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Creative and Design",
+    "parentId": 0,
+    "children": [
+      {"id": 115, "name": "Graphic Designer", "parentId": 10},
+      {"id": 116, "name": "UX/UI Designer", "parentId": 10},
+      {"id": 117, "name": "Copywriter", "parentId": 10},
+      {"id": 118, "name": "Art Director", "parentId": 10},
+      {"id": 119, "name": "Photographer", "parentId": 10},
+      {"id": 120, "name": "Video Editor", "parentId": 10},
+      {"id": 121, "name": "Illustrator", "parentId": 10},
+      {"id": 122, "name": "Web Designer", "parentId": 10},
+      {"id": 123, "name": "Interior Designer", "parentId": 10},
+      {"id": 124, "name": "Fashion Designer", "parentId": 10},
+      {"id": 125, "name": "Motion Graphics Designer", "parentId": 10}
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Operations and Logistics",
+    "parentId": 0,
+    "children": [
+      {"id": 126, "name": "Operations Manager", "parentId": 11},
+      {"id": 127, "name": "Logistics Coordinator", "parentId": 11},
+      {"id": 128, "name": "Supply Chain Analyst", "parentId": 11},
+      {"id": 129, "name": "Warehouse Supervisor", "parentId": 11},
+      {"id": 130, "name": "Fulfillment Associate", "parentId": 11},
+      {"id": 131, "name": "Inventory Control Specialist", "parentId": 11},
+      {"id": 132, "name": "Purchasing Agent", "parentId": 11},
+      {"id": 133, "name": "Transportation Manager", "parentId": 11},
+      {"id": 134, "name": "Quality Control Inspector", "parentId": 11},
+      {"id": 135, "name": "Distribution Center Manager", "parentId": 11},
+      {"id": 136, "name": "Production Planner", "parentId": 11}
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Management and Executive",
+    "parentId": 0,
+    "children": [
+      {"id": 137, "name": "General Manager", "parentId": 12},
+      {"id": 138, "name": "CEO", "parentId": 12},
+      {"id": 139, "name": "Director of Operations", "parentId": 12},
+      {"id": 140, "name": "Chief Financial Officer", "parentId": 12},
+      {"id": 141, "name": "Chief Operating Officer", "parentId": 12},
+      {"id": 142, "name": "Chief Marketing Officer", "parentId": 12},
+      {"id": 143, "name": "Chief Technology Officer", "parentId": 12},
+      {"id": 144, "name": "Chief Human Resources Officer", "parentId": 12},
+      {"id": 145, "name": "Chief Information Officer", "parentId": 12},
+      {"id": 146, "name": "Vice President", "parentId": 12},
+      {"id": 147, "name": "Business Development Director", "parentId": 12}
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Legal",
+    "parentId": 0,
+    "children": [
+      {"id": 148, "name": "Lawyer", "parentId": 13},
+      {"id": 149, "name": "Paralegal", "parentId": 13},
+      {"id": 150, "name": "Legal Secretary", "parentId": 13},
+      {"id": 151, "name": "Judge", "parentId": 13},
+      {"id": 152, "name": "Legal Assistant", "parentId": 13},
+      {"id": 153, "name": "Court Reporter", "parentId": 13},
+      {"id": 154, "name": "Legal Counsel", "parentId": 13},
+      {"id": 155, "name": "Intellectual Property Attorney", "parentId": 13},
+      {"id": 156, "name": "Corporate Counsel", "parentId": 13},
+      {"id": 157, "name": "Contract Administrator", "parentId": 13},
+      {"id": 158, "name": "Estate Planning Attorney", "parentId": 13}
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Research and Development",
+    "parentId": 0,
+    "children": [
+      {"id": 159, "name": "Research Scientist", "parentId": 14},
+      {"id": 160, "name": "R&D Engineer", "parentId": 14},
+      {"id": 161, "name": "Lab Technician", "parentId": 14},
+      {"id": 162, "name": "Product Developer", "parentId": 14},
+      {"id": 163, "name": "Research Analyst", "parentId": 14},
+      {"id": 164, "name": "Innovation Manager", "parentId": 14},
+      {"id": 165, "name": "Quantitative Analyst", "parentId": 14},
+      {"id": 166, "name": "Clinical Researcher", "parentId": 14},
+      {"id": 167, "name": "Data Scientist", "parentId": 14},
+      {"id": 168, "name": "Market Researcher", "parentId": 14},
+      {"id": 169, "name": "Product Development Manager", "parentId": 14}
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Other",
+    "parentId": 0
+  }
+]

@@ -49,8 +49,8 @@ public class EmailServiceImpl implements EmailService {
         MimeMessage mimeMessage = createEmail(userAuthentication,
                 "Reset password",
                 "<h3>Reset password link : </h3>",
-//                "https://job-search-project-78cb5c6d6611.herokuapp.com/reset-passoword?token=");
-                "http://localhost:8080/reset-password?token=");
+                "https://job-search-project-78cb5c6d6611.herokuapp.com/reset-passoword?token=");
+//                "http://localhost:8080/reset-password?token=");
         sendEmail(mimeMessage);
         return "Reset password email sent! " +
                 "Please, check your email to set new password to your account";
